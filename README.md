@@ -1,9 +1,9 @@
-# yarn-isolate-workspace
+# pnpm-isolate-workspace
 
-![npm](https://img.shields.io/npm/v/yarn-isolate-workspace)
+![npm](https://img.shields.io/npm/v/pnpm-isolate-workspace)
 
-**Isolate a workspace in yarn workspaces project**
-when working in yarn workspaces environment
+**Isolate a workspace in pnpm workspaces project**
+when working in pnpm workspaces environment
 sometimes some workspaces depend on other workspaces.
 this behavior makes it hard to prepare a workspace for a production environment,
 since we need to copy all related workspaces along with it.
@@ -33,13 +33,13 @@ if we have a monorepo workspaces tree that looks like this:
 ├   ├── package.json
 ├   ├── src-code
 ├── package.json
-├── .yarnrc
-├── yarn.lock
+├── pnpm-lock.yaml
+├── pnpm-workspace.yaml
 ```
 
 and workspace-1 depend on workspace-2
 after running
-`npx yarn-isolate-workspace workspace-1`
+`npx pnpm-isolate-workspace workspace-1`
 the tree will look like this:
 
 ```
@@ -57,16 +57,16 @@ the tree will look like this:
                 ├── package.json
         ├── package.json
         ├── package-prod.json
-        ├── .yarnrc
-        ├── .yarn.lock
+        ├── pnpm-lock.yaml
+        ├── pnpm-workspace.yaml
     ├── package.json
     ├── src-code
 ├── workspace-2
     ├── package.json
     ├── src-code
 ├── package.json
-├── .yarnrc
-├── .yarn.lock
+├── pnpm-lock.yaml
+├── pnpm-workspace.yaml
 ```
 
 ### what did you get?
@@ -83,13 +83,13 @@ for all the node_modules. This folder contains only those pacakge.json,
 so instead of COPY all package.json one by one, you can COPY this all folder.
   3. `workspaces-src-less-prod` folder - contain all related workspaces that are not in devDependencies and
 *** same as the previous folder but each package.json filters out the devDependencis.
-same as before if you run yarn install with the --prod flag
+same as before if you run pnpm install with the --prod flag
   4. `package.json` file - duplication of the main package.json just with an extra key: `workspaces.`
      and all related workspaces are listed there so it could resolve them.
   5. `package-prod.json` file - duplication of the main package.json just with an extra key: `workspaces.`
      and without the devDependencies.
-  6. `.yarnrc` - copy if the root scope .yarnrc if exist if not generate the file with workspaces enable flag
-  7. `yarn.lock` - if there is a 'yarn.lock' file in the root of the project,
+  6. `.pnpmrc` - copy if the root scope .pnpmrc if exist if not generate the file with workspaces enable flag
+  7. `pnpm.lock` - if there is a 'pnpm.lock' file in the root of the project,
      it will copy all relevant dependencies from it
 
 ## Supported cli flags
@@ -99,10 +99,10 @@ you want to make sure you treat the depended workspaces as 'installed modules' s
 their dev-dependencies and test files.
 
 ```
-  #### yarn-isolate [options] [workspace name to isolate]
-    [--yarnrc-disable]                     disable copy or generate .yarnrc file
-    [--yarnrc-generate]                    generate yarnrc (instead of copy the existing one)
-    [--yarn-lock-disable]                  disable generate yarn.lock file
+  #### pnpm-isolate [options] [workspace name to isolate]
+    [--pnpmrc-disable]                     disable copy or generate .pnpmrc file
+    [--pnpmrc-generate]                    generate pnpmrc (instead of copy the existing one)
+    [--pnpm-lock-disable]                  disable generate pnpm.lock file
 
     [--src-less-disable]                   disable create of the src-less folders
     [--src-less-glob={value}]              glob pattern to include files with the src-less folder
@@ -125,6 +125,6 @@ their dev-dependencies and test files.
     [--project-folder={value}]             absolute path to project-root (default will look for the root)
 ```
 
-* `--src-less-glob/--src-less-prod-glob` - if you have bin files or any other files, you need to run yarn install in the workspace. For example, one of our workspaces have a bin script that warps lint command.
+* `--src-less-glob/--src-less-prod-glob` - if you have bin files or any other files, you need to run pnpm install in the workspace. For example, one of our workspaces have a bin script that warps lint command.
 * `--src-files-enable` - in case you want to create docker context of the isolated folder.
 * `--workspaces-exclude-glob` - filter files from workspaces you don't need test folders, etc.
