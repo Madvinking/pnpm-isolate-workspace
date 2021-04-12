@@ -1,0 +1,8 @@
+**/node_modules
+**/dist
+packages/test/*
+.vscode
+.yarn
+.env
+**/_isolated_/
+**/_isolated_other_/

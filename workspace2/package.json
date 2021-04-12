@@ -1,0 +1,11 @@
+{
+  "name": "@pnpm/workspace2",
+  "version": "1.0.0",
+  "description": "will isolate one pnpm workspace",
+  "main": "src/index.js",
+  "license": "MIT",
+  "author": "Nir winkler <madvinking@gmail.com>",
+  "dependencies": {
+    "@logzio-node-toolbox/consul": "0.0.19"
+  }
+}

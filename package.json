@@ -1,0 +1,64 @@
+{
+  "name": "pnpm-isolate-workspace",
+  "version": "0.2.2",
+  "description": "will isolate one pnpm workspace",
+  "main": "src/index.js",
+  "bin": {
+    "pnpm-isolate-workspace": "src/index.js"
+  },
+  "files": [
+    "src"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "pnpm",
+    "workspace",
+    "pnpm isolate",
+    "pnpm focus",
+    "pnpm workspace",
+    "pnpm workspaces",
+    "pnpm workspaces isolate",
+    "pnpm workspace isolate",
+    "lerna isolate"
+  ],
+  "author": "Nir winkler <madvinking@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Madvinking/pnpm-isolate-workspace.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rm -rf node_modules",
+    "test": "jest --config jest.config.js --silent=false full-cycle",
+    "lint": "eslint --quiet --color ."
+  },
+  "dependencies": {
+    "@pnpm/lockfile-file": "4.0.0",
+    "@pnpm/logger": "4.0.0",
+    "fs-extra": "^9.1.0",
+    "fs-readdir-recursive": "1.1.0",
+    "glob": "7.1.6"
+  },
+  "devDependencies": {
+    "husky": "4.3.0",
+    "eslint": "^7.12.1",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "jest": "26.6.1",
+    "nodemon": "2.0.6",
+    "prettier": "^2.1.2"
+  },
+  "peerDependencies": {
+    "@pnpm/logger": "4.0.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pnpm lint && pnpm test"
+    }
+  },
+  "volta": {
+    "node": "15.14.0"
+  }
+}

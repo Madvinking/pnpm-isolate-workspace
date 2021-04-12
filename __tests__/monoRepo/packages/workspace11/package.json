@@ -1,0 +1,16 @@
+{
+  "name": "workspace-11",
+  "version": "1.1.1",
+  "private": true,
+  "dependencies": {
+    "workspace-12": "1",
+    "workspace-13": "1",
+    "in-w11-dep-1": "1",
+    "in-w11-dep-2": "1"
+  },
+  "devDependencies": {
+    "workspace-14": "1",
+    "in-w11-dev-dep-1": "1",
+    "in-w11-dev-dep-2": "1"
+  }
+}

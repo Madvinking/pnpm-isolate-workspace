@@ -1,0 +1,11 @@
+{
+  "name": "mono-repo",
+  "version": "1.1.1",
+  "private": true,
+  "dependencies": {
+    "root-dep": "1"
+  },
+  "devDependencies": {
+    "root-dev-dep": "1"
+  }
+}
