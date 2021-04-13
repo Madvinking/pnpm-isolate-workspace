@@ -100,9 +100,8 @@ their dev-dependencies and test files.
 
 ```
   #### pnpm-isolate [options] [workspace name to isolate]
-    [--pnpmrc-disable]                     disable copy or generate .pnpmrc file
-    [--pnpmrc-generate]                    generate pnpmrc (instead of copy the existing one)
-    [--pnpm-lock-disable]                  disable generate pnpm.lock file
+    [--pnpmrc-disable]                     disable copy .npmrc file
+    * [--pnpm-lock-file]                   disable generate pnpm-lock.yaml file
 
     [--src-less-disable]                   disable create of the src-less folders
     [--src-less-glob={value}]              glob pattern to include files with the src-less folder

@@ -28,8 +28,7 @@ async function getParams() {
   if (getParam('--help')) printHelp();
 
   const pnpmrcDisable = getParam('--pnpmrc-disable');
-  const pnpmrcGenerate = getParam('--pnpmrc-generate');
-  const pnpmLockDisable = getParam('--pnpm-lock-disable');
+  const pnpmLockFile = getParam('--pnpm-lock-file');
   const srcLessDisable = getParam('--src-less-disable');
   const srcLessSubDev = getParam('--src-less-sub-dev-deps');
   const includeRootDeps = getParam('--include-root-deps');
@@ -145,9 +144,8 @@ async function getParams() {
     # pnpm-isolate [options] [workspace name to isolate]
 
       // pnpm files
-      [--pnpmrc-disable]                     disable copy or generate .pnpmrc file
-      [--pnpmrc-generate]                    generate pnpmrc (instead of copy the existing one)
-      [--pnpm-lock-disable]                  disable generate pnpm.lock file
+      [--pnpmrc-disable]                     disable copy .npmrc file
+      [--pnpm-lock-file]                     generate pnpm-lock.yaml file
 
       // src-less folder
       [--src-less-disable]                   disable create of the src-less folders
@@ -188,8 +186,7 @@ async function getParams() {
     relatedWorkspaces,
     projectWorkspaces,
     pnpmrcDisable,
-    pnpmrcGenerate,
-    pnpmLockDisable,
+    pnpmLockFile,
     srcLessDisable,
     srcLessGlob,
     srcLessProdDisable,

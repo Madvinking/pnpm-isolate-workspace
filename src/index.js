@@ -16,7 +16,7 @@ async function start() {
     prodWorkspaces,
     relatedWorkspaces,
     projectWorkspaces,
-    pnpmLockDisable,
+    pnpmLockFile,
     srcLessDisable,
     srcLessSubDev,
     srcLessGlob,
@@ -188,7 +188,7 @@ async function start() {
   }
 
   async function createPnpmLock() {
-    if (pnpmLockDisable) return;
+    if (!pnpmLockFile) return;
 
     if (!fs.existsSync(path.join(rootDir, 'pnpm-lock.yaml'))) {
       console.warn('no pnpm-lock.yaml file on project root');
@@ -197,43 +197,78 @@ async function start() {
 
     const importersNames = relatedWorkspaces.map(name => projectWorkspaces[name].reletivePath);
 
-    let recuireDeps = await lockfile.readWantedLockfile(rootDir, 'utf8');
+    let lfData = await lockfile.readWantedLockfile(rootDir, 'utf8');
 
-    recuireDeps.importers['.'] = JSON.parse(JSON.stringify(recuireDeps.importers[workspaceData.reletivePath]));
-    delete recuireDeps.importers[workspaceData.name];
+    Object.keys(lfData.importers).forEach(key => {
+      if (!importersNames.includes(key) && key !== workspaceData.reletivePath) delete lfData.importers[key];
+    });
+    lfData.importers['.'] = JSON.parse(JSON.stringify(lfData.importers[workspaceData.reletivePath]));
+    delete lfData.importers[workspaceData.reletivePath];
 
-    Object.keys(recuireDeps.importers).forEach(key => {
-      Object.keys(recuireDeps.importers[key].dependencies).forEach(depName => {
-        if (relatedWorkspaces.includes(depName)) {
-          recuireDeps.importers[key].dependencies[depName] = `link:./${projectWorkspaces[depName].resolvePath}`;
+    Object.keys(lfData.importers['.'].dependencies).forEach(depName => {
+      if (relatedWorkspaces.includes(depName)) {
+        lfData.importers['.'].dependencies[depName] = `link:${projectWorkspaces[depName].resolvePath}`;
+      }
+    });
+
+    Object.keys(lfData.importers['.'].devDependencies).forEach(depName => {
+      if (relatedWorkspaces.includes(depName)) {
+        lfData.importers['.'].devDependencies[depName] = `link:${projectWorkspaces[depName].resolvePath}`;
+      }
+    });
+
+    Object.keys(lfData.importers)
+      .filter(n => n !== '.')
+      .forEach(key => {
+        if (lfData.importers[key].dependencies) {
+          Object.keys(lfData.importers[key].dependencies).forEach(depName => {
+            if (relatedWorkspaces.includes(depName)) {
+              lfData.importers[key].dependencies[depName] = `link:${path.relative(
+                projectWorkspaces[key].newLocation,
+                projectWorkspaces[depName].newLocation,
+              )}`;
+            }
+          });
+        }
+        if (lfData.importers[key].devDependencies) {
+          Object.keys(lfData.importers[key].devDependencies).forEach(depName => {
+            if (relatedWorkspaces.includes(depName)) {
+              lfData.importers[key].devDependencies[depName] = `link:${path.relative(
+                projectWorkspaces[key].newLocation,
+                projectWorkspaces[depName].newLocation,
+              )}`;
+            }
+          });
         }
       });
-    });
-
-    Object.keys(recuireDeps.importers).forEach(key => {
-      if (!importersNames.includes(key) && key !== '.') delete recuireDeps.importers[key];
-    });
 
     const getDepsList = dependencies => {
       const acc = [];
-      Object.entries(dependencies).forEach(([key, value]) => {
-        const depKey = `/${key}/${value}`;
-        if (!acc.includes(depKey) && !relatedWorkspaces.includes(key)) acc.push(depKey);
-      });
+      if (dependencies) {
+        Object.entries(dependencies).forEach(([key, value]) => {
+          const depKey = `/${key}/${value}`;
+          if (!acc.includes(depKey) && !relatedWorkspaces.includes(key)) acc.push(depKey);
+        });
+      }
       return acc;
     };
 
-    const listOfDeps = Object.values(recuireDeps.importers).reduce(
+    const listOfDeps = Object.values(lfData.importers).reduce(
       (acc, { dependencies }) => [...new Set([...acc, ...getDepsList(dependencies)])],
       [],
     );
 
     let allDeps = [];
+
     const recursicveGet = list => {
       list.forEach(name => {
-        if (recuireDeps.packages[name].dependencies) {
-          const currentList = getDepsList(recuireDeps.packages[name].dependencies);
-
+        if (lfData.packages[name].dependencies && !allDeps.includes(name)) {
+          const currentList = getDepsList(lfData.packages[name].dependencies);
+          Object.keys(lfData.packages[name].dependencies).forEach(pkg => {
+            if (relatedWorkspaces.includes(pkg)) {
+              lfData.packages[name].dependencies[pkg] = `link:`;
+            }
+          });
           if (currentList) {
             allDeps = [...new Set([...allDeps, ...currentList])];
             recursicveGet(currentList);
@@ -243,11 +278,11 @@ async function start() {
     };
 
     recursicveGet(listOfDeps);
-    Object.keys(recuireDeps.packages).forEach(key => {
-      if (!allDeps.includes(key)) delete recuireDeps.packages[key];
+    Object.keys(lfData.packages).forEach(key => {
+      if (!allDeps.includes(key)) delete lfData.packages[key];
     });
 
-    await lockfile.writeWantedLockfile(isolateFolder, recuireDeps);
+    await lockfile.writeWantedLockfile(isolateFolder, lfData);
   }
 
   createDestinationFolders();
