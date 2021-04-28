@@ -4,5 +4,6 @@ packages/test/*
 .vscode
 .yarn
 .env
+.pnpm-debug.log
 **/_isolated_/
 **/_isolated_other_/

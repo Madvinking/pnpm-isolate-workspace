@@ -68,14 +68,22 @@ async function getParams() {
   const projectWorkspaces = await getWorkspaces(rootDir);
 
   const workspaceName = (function getWorkspaceName() {
-    const [targetWorkspaceName] = cliParams;
+    let [targetWorkspaceName] = cliParams;
 
-    if (!targetWorkspaceName) {
-      console.log('please provide workspace name or folder');
-      process.exit(1);
+    if (targetWorkspaceName) {
+      if (projectWorkspaces[targetWorkspaceName]) return targetWorkspaceName;
+    } else {
+      targetWorkspaceName = '.';
     }
 
-    if (projectWorkspaces[targetWorkspaceName]) return targetWorkspaceName;
+    if (targetWorkspaceName[0] === '.') {
+      targetWorkspaceName = path.resolve(projectRoot, targetWorkspaceName);
+    }
+
+    // if (!targetWorkspaceName) {
+    //   console.log('please provide workspace name or folder');
+    //   process.exit(1);
+    // }
 
     let workspaceName = Object.keys(projectWorkspaces).find(
       workspace => projectWorkspaces[workspace].location === targetWorkspaceName,
