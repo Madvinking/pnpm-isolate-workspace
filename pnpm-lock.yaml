@@ -16,6 +16,7 @@ importers:
       husky: 6.0.0
       jest: 26.6.3
       nodemon: 2.0.7
+      pnpm: 6.2.5
       prettier: ^2.2.1
       yaml: 1.10.2
     dependencies:
@@ -33,6 +34,7 @@ importers:
       husky: 6.0.0
       jest: 26.6.3
       nodemon: 2.0.7
+      pnpm: 6.2.5
       prettier: 2.2.1
 
   packages/workspace1:
@@ -3961,6 +3963,12 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       find-up: 4.1.0
+    dev: true
+
+  /pnpm/6.2.5:
+    resolution: {integrity: sha512-klFrPM3JDo+LFA2f7Ih3wnH296ZDDqfFx5BCc3ADZV6zRQFscEL8XIU8jDqsHFv7EZHLP9Z12fzY/HyHca/duw==}
+    engines: {node: '>=12.17'}
+    hasBin: true
     dev: true
 
   /posix-character-classes/0.1.1:
