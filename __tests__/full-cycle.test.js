@@ -95,7 +95,7 @@ describe('full cycle of isolated', () => {
     expect(mainPackageJSON.dependencies).toEqual(generatedPackageJSON.dependencies);
     expect(generatedProdPackageJSON.devDependencies).toEqual({});
 
-
+    // expect(fse.readFileSync(`${workspaceFolder}/_isolated_/yarn.lock`).toString()).toMatchSnapshot();
   });
 
   test('--output-folder: generated in a different output folder', async () => {
