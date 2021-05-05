@@ -59,7 +59,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pnpm lint && pnpm test"
+      "pre-commit": "pnpm run lint && pnpm run test"
     }
   },
   "volta": {
