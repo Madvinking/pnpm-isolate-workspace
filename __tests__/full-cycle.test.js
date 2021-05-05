@@ -360,4 +360,12 @@ describe('full cycle of isolated', () => {
     // expect(yarnLock.includes('root-dep')).toEqual(true);
     // expect(yarnLock.includes('root-dev-dep')).toEqual(true);
   });
+
+  test('--disable-root-config: should not copy root pnpm config', async () => {
+    runWithParam('--disable-root-config');
+
+    const generatedPackageJSON = JSON.parse(fse.readFileSync(`${workspaceFolder}/_isolated_/package.json`).toString());
+
+    expect(generatedPackageJSON.pnpm).toEqual(undefined);
+  });
 });
