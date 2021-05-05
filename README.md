@@ -114,6 +114,7 @@ their dev-dependencies and test files.
     [--json-file-prod-disable]             disable create json prod json file
     [--output-folder]                      folder to create all generated files (default to _isolated_)
     [--include-root-deps]                  include root workspaces package.json dependencies and dev dependencies
+    [--disable-root-config]                disable root package.json pnpm config (like overrides)
 
     [--src-files-enable]                   copy all src file of main workspace to the isolated folder
     [--src-files-exclude-glob={value}]     glob pattern to exclude files from the main workspace copied files

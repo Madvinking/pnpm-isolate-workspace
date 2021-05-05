@@ -10,6 +10,7 @@ const YAML = require('yaml');
 async function start() {
   const {
     rootDir,
+    disableRootConfig,
     rootPacakgeJson,
     outputFolder,
     workspaceData,
@@ -149,15 +150,17 @@ async function start() {
   function createMainJsonFile() {
     let currentDevDependencies = {};
 
-    if (workspaceData.pkgJson.devDependencies) {
-      currentDevDependencies = JSON.parse(JSON.stringify(workspaceData.pkgJson.devDependencies));
+    currentDevDependencies = JSON.parse(JSON.stringify(workspaceData.pkgJson.devDependencies || {}));
 
-      if (includeRootDeps) {
-        currentDevDependencies = {
-          ...rootPacakgeJson.devDependencies,
-          ...currentDevDependencies,
-        };
-      }
+    if (includeRootDeps) {
+      currentDevDependencies = {
+        ...rootPacakgeJson.devDependencies,
+        ...currentDevDependencies,
+      };
+    }
+
+    if (!disableRootConfig && rootPacakgeJson.pnpm) {
+      workspaceData.pkgJson.pnpm = rootPacakgeJson.pnpm;
     }
 
     if (includeRootDeps) {

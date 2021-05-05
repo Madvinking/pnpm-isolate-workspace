@@ -4,6 +4,7 @@ const fse = require('fs-extra');
 const path = require('path');
 // const lockfile = require('@pnpm/lockfile-file');
 const YAML = require('yaml');
+let rootFolder = path.join(__dirname, 'monoRepo');
 let workspaceFolder = path.join(__dirname, 'monoRepo/packages/root-workspace');
 let workspaceFolder1 = path.join(__dirname, 'monoRepo/packages/workspace-1');
 
@@ -84,16 +85,19 @@ describe('full cycle of isolated', () => {
       'package.json',
     ]);
 
+    const rootPackageJSON = JSON.parse(fse.readFileSync(`${rootFolder}/package.json`).toString());
     const mainPackageJSON = JSON.parse(fse.readFileSync(`${workspaceFolder}/package.json`).toString());
     const generatedPackageJSON = JSON.parse(fse.readFileSync(`${workspaceFolder}/_isolated_/package.json`).toString());
 
     expect(mainPackageJSON.dependencies).toEqual(generatedPackageJSON.dependencies);
     expect(mainPackageJSON.devDependencies).toEqual(generatedPackageJSON.devDependencies);
+    expect(rootPackageJSON.pnpm).toEqual(generatedPackageJSON.pnpm);
 
     const generatedProdPackageJSON = JSON.parse(fse.readFileSync(`${workspaceFolder}/_isolated_/package-prod.json`).toString());
 
     expect(mainPackageJSON.dependencies).toEqual(generatedPackageJSON.dependencies);
     expect(generatedProdPackageJSON.devDependencies).toEqual({});
+    expect(rootPackageJSON.pnpm).toEqual(generatedProdPackageJSON.pnpm);
   });
 
   test('--output-folder: generated in a different output folder', async () => {
