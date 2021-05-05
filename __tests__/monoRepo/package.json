@@ -7,5 +7,10 @@
   },
   "devDependencies": {
     "root-dev-dep": "1"
+  },
+  "pnpm": {
+    "overrides": {
+      "override-workspace": "82"
+    }
   }
 }

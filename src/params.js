@@ -43,6 +43,7 @@ async function getParams() {
   const srcFilesIncludeGlob = getParam('--src-files-include-glob', true);
   const srcFilesExcludeGlob = getParam('--src-files-exclude-glob', true);
   const workspacesExcludeGlob = getParam('--workspaces-exclude-glob', true);
+  const disableRootConfig = getParam('--disable-root-config');
   const projectRoot = getParam('--project-folder', true) || path.resolve();
 
   let max = getParam('--max-depth', true) || 5;
@@ -161,6 +162,7 @@ async function getParams() {
       [--json-file-prod-disable]             disable create json prod json file (withtout dev-dependencies)
       [--output-folder]                      folder to create all generated files (default to _isolated_)
       [--include-root-deps]                  include root workspaces package.json dependencies and dev dependencies
+      [--disable-root-config]                disable root package.json pnpm config (like overrides)
 
       // files
       [--src-files-enable]                   copy all src file of main worksapce to isolate folder
@@ -205,6 +207,7 @@ async function getParams() {
     srcLessFolder,
     srcLessFolderProd,
     includeRootDeps,
+    disableRootConfig,
   };
 }
 
