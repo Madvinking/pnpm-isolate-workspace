@@ -32,25 +32,26 @@
   "scripts": {
     "clean": "rm -rf node_modules",
     "test": "jest --config jest.config.js --silent=false full-cycle",
+    "test:watch": "jest --watch --config jest.config.js --silent=false full-cycle",
     "lint": "eslint --quiet --color ."
   },
   "dependencies": {
-    "@pnpm/lockfile-file": "4.0.0",
-    "@pnpm/find-workspace-packages": "3.0.0",
+    "@pnpm/lockfile-file": "4.0.1",
+    "@pnpm/find-workspace-packages": "3.0.4",
     "@pnpm/logger": "4.0.0",
-    "fs-extra": "^9.1.0",
+    "fs-extra": "^10.0.0",
     "fs-readdir-recursive": "1.1.0",
     "glob": "7.1.6",
     "yaml": "1.10.2"
   },
   "devDependencies": {
-    "husky": "4.3.0",
-    "eslint": "^7.12.1",
-    "eslint-config-prettier": "^6.15.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "jest": "26.6.1",
-    "nodemon": "2.0.6",
-    "prettier": "^2.1.2"
+    "husky": "6.0.0",
+    "eslint": "^7.25.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "jest": "26.6.3",
+    "nodemon": "2.0.7",
+    "prettier": "^2.2.1"
   },
   "peerDependencies": {
     "@pnpm/logger": "4.0.0"
@@ -61,6 +62,6 @@
     }
   },
   "volta": {
-    "node": "15.14.0"
+    "node": "16.1.0"
   }
 }

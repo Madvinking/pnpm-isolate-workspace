@@ -6,3 +6,5 @@ packages/test/*
 .env
 **/_isolated_/
 **/_isolated_other_/
+**/.DS_Store
+.DS_Store
