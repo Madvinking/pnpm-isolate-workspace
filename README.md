@@ -40,6 +40,8 @@ if we have a monorepo workspaces tree that looks like this:
 and workspace-1 depend on workspace-2
 after running
 `npx pnpm-isolate-workspace workspace-1`
+or
+`npx pnpm-isolate-workspace` from the workspace folder
 the tree will look like this:
 
 ```

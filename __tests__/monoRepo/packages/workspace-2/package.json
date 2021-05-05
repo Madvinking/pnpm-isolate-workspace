@@ -3,11 +3,11 @@
   "version": "1.1.1",
   "private": true,
   "dependencies": {
-    "in-w2-dep-1": "1",
-    "in-w2-dep-2": "1"
+    "in-w2-dep-1": "1.0.0",
+    "in-w2-dep-2": "2.0.0"
   },
   "devDependencies": {
-    "in-w2-dev-dep-1": "1",
-    "in-w2-dev-dep-2": "1"
+    "in-w2-dev-dep-1": "1.0.0",
+    "in-w2-dev-dep-2": "1.0.0"
   }
 }

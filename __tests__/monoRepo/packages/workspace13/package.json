@@ -3,12 +3,12 @@
   "version": "1.1.1",
   "private": true,
   "dependencies": {
-    "workspace16": "1",
-    "in-w13-dep-1": "1",
-    "in-w13-dep-2": "1"
+    "workspace16": "workspace:1.0.0",
+    "in-w13-dep-1": "workspace:1.0.0",
+    "in-w13-dep-2": "workspace:1.0.0"
   },
   "devDependencies": {
-    "in-w13-dev-dep-1": "1",
-    "in-w13-dev-dep-2": "1"
+    "in-w13-dev-dep-1": "workspace:1.0.0",
+    "in-w13-dev-dep-2": "workspace:1.0.0"
   }
 }

@@ -3,14 +3,14 @@
   "version": "1.1.1",
   "private": true,
   "dependencies": {
-    "workspace-12": "1",
-    "workspace-13": "1",
-    "in-w11-dep-1": "1",
-    "in-w11-dep-2": "1"
+    "workspace-12": "workspace:1.0.0",
+    "workspace-13": "workspace:1.0.0",
+    "in-w11-dep-1": "workspace:1.0.0",
+    "in-w11-dep-2": "workspace:1.0.0"
   },
   "devDependencies": {
-    "workspace-14": "1",
-    "in-w11-dev-dep-1": "1",
-    "in-w11-dev-dep-2": "1"
+    "workspace-14": "workspace:1.0.0",
+    "in-w11-dev-dep-1": "workspace:1.0.0",
+    "in-w11-dev-dep-2": "workspace:1.0.0"
   }
 }

@@ -1,8 +1,7 @@
 const { execSync } = require('child_process');
 const fse = require('fs-extra');
-// const fs = require('fs');
 const path = require('path');
-// const lockfile = require('@pnpm/lockfile-file');
+const lockfile = require('@pnpm/lockfile-file');
 const YAML = require('yaml');
 let rootFolder = path.join(__dirname, 'monoRepo');
 let workspaceFolder = path.join(__dirname, 'monoRepo/packages/root-workspace');
@@ -30,6 +29,7 @@ describe('full cycle of isolated', () => {
     expect(folder).toEqual([
       'package-prod.json',
       'package.json',
+      'pnpm-lock.yaml',
       'pnpm-workspace.yaml',
       'workspaces',
       'workspaces-src-less',
@@ -98,6 +98,67 @@ describe('full cycle of isolated', () => {
     expect(mainPackageJSON.dependencies).toEqual(generatedPackageJSON.dependencies);
     expect(generatedProdPackageJSON.devDependencies).toEqual({});
     expect(rootPackageJSON.pnpm).toEqual(generatedProdPackageJSON.pnpm);
+
+    let lfData = await lockfile.readWantedLockfile(`${workspaceFolder}/_isolated_`, 'utf8');
+
+    expect(lfData.importers['.'].specifiers).toEqual({
+      'in-root-dep-1': '1.0.0',
+      'in-root-dep-2': '2.0.0',
+      'in-root-dev-dep-1': '1.0.0',
+      'in-root-dev-dep-2': '2.0.0',
+      'workspace-1': 'workspace:1.0.0',
+      'workspace-11': 'workspace:1.0.0',
+      'workspace-12': 'workspace:1.0.0',
+      'workspace-2': 'workspace:1.0.0',
+    });
+
+    expect(lfData.importers['.'].dependencies).toEqual({
+      'in-root-dep-1': '1.0.0',
+      'in-root-dep-2': '2.0.0',
+      'workspace-1': 'link:workspaces/packages/workspace-1',
+      'workspace-2': 'link:workspaces/packages/workspace-2',
+    });
+
+    expect(lfData.importers['.'].devDependencies).toEqual({
+      'in-root-dev-dep-1': '1.0.0',
+      'in-root-dev-dep-2': '2.0.0',
+      'workspace-11': 'link:workspaces/packages/workspace11',
+      'workspace-12': 'link:workspaces/packages/workspace12',
+    });
+  });
+
+  test('--include-root-deps: generated in a different output folder', async () => {
+    runWithParam('--include-root-deps');
+
+    let lfData = await lockfile.readWantedLockfile(`${workspaceFolder}/_isolated_`, 'utf8');
+    expect(lfData.importers['.'].specifiers).toEqual({
+      'dep-dev': '2.2.1',
+      'fs-e': '^10.0.0',
+      'in-root-dep-1': '1.0.0',
+      'in-root-dep-2': '2.0.0',
+      'in-root-dev-dep-1': '1.0.0',
+      'in-root-dev-dep-2': '2.0.0',
+      'workspace-1': 'workspace:1.0.0',
+      'workspace-11': 'workspace:1.0.0',
+      'workspace-12': 'workspace:1.0.0',
+      'workspace-2': 'workspace:1.0.0',
+    });
+
+    expect(lfData.importers['.'].dependencies).toEqual({
+      'fs-e': '10.0.0',
+      'in-root-dep-1': '1.0.0',
+      'in-root-dep-2': '2.0.0',
+      'workspace-1': 'link:workspaces/packages/workspace-1',
+      'workspace-2': 'link:workspaces/packages/workspace-2',
+    });
+
+    expect(lfData.importers['.'].devDependencies).toEqual({
+      'dev-dep': '2.2.1',
+      'in-root-dev-dep-1': '1.0.0',
+      'in-root-dev-dep-2': '2.0.0',
+      'workspace-11': 'link:workspaces/packages/workspace11',
+      'workspace-12': 'link:workspaces/packages/workspace12',
+    });
   });
 
   test('--output-folder: generated in a different output folder', async () => {
@@ -107,26 +168,13 @@ describe('full cycle of isolated', () => {
     expect(folder).toEqual([
       'package-prod.json',
       'package.json',
+      'pnpm-lock.yaml',
       'pnpm-workspace.yaml',
       'workspaces',
       'workspaces-src-less',
       'workspaces-src-less-prod',
     ]);
     expect(fse.existsSync(`${workspaceFolder}/_isolated_`)).toEqual(false);
-  });
-
-  test('--yarnrc-disable: disable yarnrc creation', async () => {
-    runWithParam('--yarnrc-disable');
-
-    const folder = fse.readdirSync(`${workspaceFolder}/_isolated_`);
-    expect(folder).toEqual([
-      'package-prod.json',
-      'package.json',
-      'pnpm-workspace.yaml',
-      'workspaces',
-      'workspaces-src-less',
-      'workspaces-src-less-prod',
-    ]);
   });
 
   test.skip('--npmrc-disable: generate .npmrc', async () => {
@@ -148,14 +196,14 @@ describe('full cycle of isolated', () => {
     );
   });
 
-  test.skip('--pnpm-lock-file: disable yarn lock creation', async () => {
+  test('--pnpm-lock-file: disable yarn lock creation', async () => {
     runWithParam('--pnpm-lock-file');
 
     const folder = fse.readdirSync(`${workspaceFolder}/_isolated_`);
     expect(folder).toEqual([
-      '.yarnrc',
       'package-prod.json',
       'package.json',
+      'pnpm-workspace.yaml',
       'workspaces',
       'workspaces-src-less',
       'workspaces-src-less-prod',
@@ -166,14 +214,28 @@ describe('full cycle of isolated', () => {
     runWithParam('--src-less-disable');
 
     const folder = fse.readdirSync(`${workspaceFolder}/_isolated_`);
-    expect(folder).toEqual(['package-prod.json', 'package.json', 'pnpm-workspace.yaml', 'workspaces', 'workspaces-src-less-prod']);
+    expect(folder).toEqual([
+      'package-prod.json',
+      'package.json',
+      'pnpm-lock.yaml',
+      'pnpm-workspace.yaml',
+      'workspaces',
+      'workspaces-src-less-prod',
+    ]);
   });
 
   test('--src-less-prod-disable]: disable src less prod folder creation', async () => {
     runWithParam('--src-less-prod-disable]');
 
     const folder = fse.readdirSync(`${workspaceFolder}/_isolated_`);
-    expect(folder).toEqual(['package-prod.json', 'package.json', 'pnpm-workspace.yaml', 'workspaces', 'workspaces-src-less']);
+    expect(folder).toEqual([
+      'package-prod.json',
+      'package.json',
+      'pnpm-lock.yaml',
+      'pnpm-workspace.yaml',
+      'workspaces',
+      'workspaces-src-less',
+    ]);
   });
 
   test('--json-file-disable: disable json file creation', async () => {
@@ -182,6 +244,7 @@ describe('full cycle of isolated', () => {
     const folder = fse.readdirSync(`${workspaceFolder}/_isolated_`);
     expect(folder).toEqual([
       'package-prod.json',
+      'pnpm-lock.yaml',
       'pnpm-workspace.yaml',
       'workspaces',
       'workspaces-src-less',
@@ -195,6 +258,7 @@ describe('full cycle of isolated', () => {
     const folder = fse.readdirSync(`${workspaceFolder}/_isolated_`);
     expect(folder).toEqual([
       'package.json',
+      'pnpm-lock.yaml',
       'pnpm-workspace.yaml',
       'workspaces',
       'workspaces-src-less',
@@ -245,6 +309,7 @@ describe('full cycle of isolated', () => {
       'no.js',
       'package-prod.json',
       'package.json',
+      'pnpm-lock.yaml',
       'pnpm-workspace.yaml',
       'src.js',
       'workspaces',
@@ -260,6 +325,7 @@ describe('full cycle of isolated', () => {
     expect(folder).toEqual([
       'package-prod.json',
       'package.json',
+      'pnpm-lock.yaml',
       'pnpm-workspace.yaml',
       'src.js',
       'workspaces',
@@ -275,6 +341,7 @@ describe('full cycle of isolated', () => {
     expect(folder).toEqual([
       'package-prod.json',
       'package.json',
+      'pnpm-lock.yaml',
       'pnpm-workspace.yaml',
       'src.js',
       'workspaces',
@@ -290,6 +357,7 @@ describe('full cycle of isolated', () => {
     expect(folder).toEqual([
       'package-prod.json',
       'package.json',
+      'pnpm-lock.yaml',
       'pnpm-workspace.yaml',
       'workspaces',
       'workspaces-src-less',
@@ -301,11 +369,11 @@ describe('full cycle of isolated', () => {
     );
 
     expect(subWorkspacePackgeJson.devDependencies).toEqual({
-      'workspace-11': '1',
-      'workspace-13': '1',
-      'workspace-15': '1',
-      'in-w1-dev-dep-1': '1',
-      'in-w1-dev-dep-2': '1',
+      'in-w1-dev-dep-1': '1.0.0',
+      'in-w1-dev-dep-2': '2.0.0',
+      'workspace-11': 'workspace:1.0.0',
+      'workspace-13': 'workspace:1.0.0',
+      'workspace-15': 'workspace:1.0.0',
     });
 
     // expect(fse.readFileSync(`${workspaceFolder}/_isolated_/yarn.lock`).toString().includes('in-w1-dev-dep-1@1')).toEqual(true);
@@ -319,6 +387,7 @@ describe('full cycle of isolated', () => {
     expect(folder).toEqual([
       'package-prod.json',
       'package.json',
+      'pnpm-lock.yaml',
       'pnpm-workspace.yaml',
       'workspaces',
       'workspaces-src-less',
@@ -328,29 +397,29 @@ describe('full cycle of isolated', () => {
     const mainPacakgeJson = JSON.parse(fse.readFileSync(`${workspaceFolder}/_isolated_/package.json`).toString());
 
     expect(mainPacakgeJson.dependencies).toEqual({
-      'in-root-dep-1': '1',
-      'in-root-dep-2': '2',
+      'in-root-dep-1': '1.0.0',
+      'in-root-dep-2': '2.0.0',
       'root-dep': '1',
-      'workspace-1': '1',
-      'workspace-2': '1',
+      'workspace-1': 'workspace:1.0.0',
+      'workspace-2': 'workspace:1.0.0',
     });
 
     expect(mainPacakgeJson.devDependencies).toEqual({
-      'in-root-dev-dep-1': '1',
-      'in-root-dev-dep-2': '1',
+      'in-root-dev-dep-1': '1.0.0',
+      'in-root-dev-dep-2': '2.0.0',
       'root-dev-dep': '1',
-      'workspace-11': '1',
-      'workspace-12': '1',
+      'workspace-11': 'workspace:1.0.0',
+      'workspace-12': 'workspace:1.0.0',
     });
 
     const pacakgeJsonProd = JSON.parse(fse.readFileSync(`${workspaceFolder}/_isolated_/package-prod.json`).toString());
 
     expect(pacakgeJsonProd.dependencies).toEqual({
-      'in-root-dep-1': '1',
-      'in-root-dep-2': '2',
+      'in-root-dep-1': '1.0.0',
+      'in-root-dep-2': '2.0.0',
       'root-dep': '1',
-      'workspace-1': '1',
-      'workspace-2': '1',
+      'workspace-1': 'workspace:1.0.0',
+      'workspace-2': 'workspace:1.0.0',
     });
 
     expect(pacakgeJsonProd.devDependencies).toEqual({});
