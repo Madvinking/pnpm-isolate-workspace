@@ -1,8 +1,8 @@
 const { execSync } = require('child_process');
 const fse = require('fs-extra');
-const fs = require('fs');
+// const fs = require('fs');
 const path = require('path');
-const lockfile = require('@pnpm/lockfile-file');
+// const lockfile = require('@pnpm/lockfile-file');
 const YAML = require('yaml');
 let workspaceFolder = path.join(__dirname, 'monoRepo/packages/root-workspace');
 let workspaceFolder1 = path.join(__dirname, 'monoRepo/packages/workspace-1');
@@ -32,7 +32,7 @@ describe('full cycle of isolated', () => {
       'pnpm-workspace.yaml',
       'workspaces',
       'workspaces-src-less',
-      'workspaces-src-less-prod'
+      'workspaces-src-less-prod',
     ]);
 
     const worksapceYaml = [
@@ -43,8 +43,8 @@ describe('full cycle of isolated', () => {
       'workspaces/packages/workspace11',
       'workspaces/packages/workspace12',
       'workspaces/packages/workspace13',
-      'workspaces/packages/workspace16'
-    ]
+      'workspaces/packages/workspace16',
+    ];
 
     const currentYaml = YAML.parse(fse.readFileSync(`${workspaceFolder}/_isolated_/pnpm-workspace.yaml`).toString());
 
@@ -90,7 +90,6 @@ describe('full cycle of isolated', () => {
     expect(mainPackageJSON.dependencies).toEqual(generatedPackageJSON.dependencies);
     expect(mainPackageJSON.devDependencies).toEqual(generatedPackageJSON.devDependencies);
 
-
     const generatedProdPackageJSON = JSON.parse(fse.readFileSync(`${workspaceFolder}/_isolated_/package-prod.json`).toString());
 
     expect(mainPackageJSON.dependencies).toEqual(generatedPackageJSON.dependencies);
@@ -109,7 +108,7 @@ describe('full cycle of isolated', () => {
       'pnpm-workspace.yaml',
       'workspaces',
       'workspaces-src-less',
-      'workspaces-src-less-prod'
+      'workspaces-src-less-prod',
     ]);
     expect(fse.existsSync(`${workspaceFolder}/_isolated_`)).toEqual(false);
   });
@@ -121,10 +120,10 @@ describe('full cycle of isolated', () => {
     expect(folder).toEqual([
       'package-prod.json',
       'package.json',
-      "pnpm-workspace.yaml",
+      'pnpm-workspace.yaml',
       'workspaces',
       'workspaces-src-less',
-      'workspaces-src-less-prod'
+      'workspaces-src-less-prod',
     ]);
   });
 
@@ -165,26 +164,14 @@ describe('full cycle of isolated', () => {
     runWithParam('--src-less-disable');
 
     const folder = fse.readdirSync(`${workspaceFolder}/_isolated_`);
-    expect(folder).toEqual([
-      'package-prod.json',
-      'package.json',
-      'pnpm-workspace.yaml',
-      'workspaces',
-      'workspaces-src-less-prod'
-    ]);
+    expect(folder).toEqual(['package-prod.json', 'package.json', 'pnpm-workspace.yaml', 'workspaces', 'workspaces-src-less-prod']);
   });
 
   test('--src-less-prod-disable]: disable src less prod folder creation', async () => {
     runWithParam('--src-less-prod-disable]');
 
     const folder = fse.readdirSync(`${workspaceFolder}/_isolated_`);
-    expect(folder).toEqual([
-      'package-prod.json',
-      'package.json',
-      'pnpm-workspace.yaml',
-      'workspaces',
-      'workspaces-src-less'
-    ]);
+    expect(folder).toEqual(['package-prod.json', 'package.json', 'pnpm-workspace.yaml', 'workspaces', 'workspaces-src-less']);
   });
 
   test('--json-file-disable: disable json file creation', async () => {
@@ -196,7 +183,7 @@ describe('full cycle of isolated', () => {
       'pnpm-workspace.yaml',
       'workspaces',
       'workspaces-src-less',
-      'workspaces-src-less-prod'
+      'workspaces-src-less-prod',
     ]);
   });
 
@@ -209,7 +196,7 @@ describe('full cycle of isolated', () => {
       'pnpm-workspace.yaml',
       'workspaces',
       'workspaces-src-less',
-      'workspaces-src-less-prod'
+      'workspaces-src-less-prod',
     ]);
   });
 
@@ -259,7 +246,7 @@ describe('full cycle of isolated', () => {
       'pnpm-workspace.yaml',
       'src.js',
       'workspaces',
-      'workspaces-src-less-prod'
+      'workspaces-src-less-prod',
     ]);
   });
 
@@ -274,7 +261,7 @@ describe('full cycle of isolated', () => {
       'pnpm-workspace.yaml',
       'src.js',
       'workspaces',
-      'workspaces-src-less-prod'
+      'workspaces-src-less-prod',
     ]);
   });
 
@@ -289,10 +276,8 @@ describe('full cycle of isolated', () => {
       'pnpm-workspace.yaml',
       'src.js',
       'workspaces',
-      'workspaces-src-less-prod'
+      'workspaces-src-less-prod',
     ]);
-
-
   });
 
   test('--src-less-sub-dev-deps: should include sub worksapced dev deps', async () => {
@@ -306,7 +291,7 @@ describe('full cycle of isolated', () => {
       'pnpm-workspace.yaml',
       'workspaces',
       'workspaces-src-less',
-      'workspaces-src-less-prod'
+      'workspaces-src-less-prod',
     ]);
 
     const subWorkspacePackgeJson = JSON.parse(
@@ -335,7 +320,7 @@ describe('full cycle of isolated', () => {
       'pnpm-workspace.yaml',
       'workspaces',
       'workspaces-src-less',
-      'workspaces-src-less-prod'
+      'workspaces-src-less-prod',
     ]);
 
     const mainPacakgeJson = JSON.parse(fse.readFileSync(`${workspaceFolder}/_isolated_/package.json`).toString());
