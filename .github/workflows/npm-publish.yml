@@ -10,5 +10,5 @@ jobs:
         with:
           version: 6.2.5
       - run: pnpm install
-      - run: pnpm lint
-      - run: pnpm test
+      - run: pnpm run lint
+      - run: pnpm run test
