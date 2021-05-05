@@ -3,15 +3,15 @@
   "version": "1.1.1",
   "private": true,
   "dependencies": {
-    "workspace-1": "1",
-    "workspace-2": "1",
-    "in-root-dep-1": "1",
-    "in-root-dep-2": "2"
+    "workspace-1": "workspace:1.0.0",
+    "workspace-2": "workspace:1.0.0",
+    "in-root-dep-1": "1.0.0",
+    "in-root-dep-2": "2.0.0"
   },
   "devDependencies": {
-    "workspace-11": "1",
-    "workspace-12": "1",
-    "in-root-dev-dep-1": "1",
-    "in-root-dev-dep-2": "1"
+    "workspace-11": "workspace:1.0.0",
+    "workspace-12": "workspace:1.0.0",
+    "in-root-dev-dep-1": "1.0.0",
+    "in-root-dev-dep-2": "2.0.0"
   }
 }

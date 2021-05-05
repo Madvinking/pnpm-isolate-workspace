@@ -3,10 +3,9 @@
   "version": "1.1.1",
   "private": true,
   "dependencies": {
-    "workspace4": "1",
-    "in-w3-dep-1": "1",
-    "in-w3-dep-2": "1"
+    "workspace4": "workspace:1.0.0",
+    "in-w3-dep-1": "workspace:1.0.0",
+    "in-w3-dep-2": "workspace:1.0.0"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }

@@ -28,7 +28,7 @@ async function getParams() {
   if (getParam('--help')) printHelp();
 
   const pnpmrcDisable = getParam('--pnpmrc-disable');
-  const pnpmLockFile = getParam('--pnpm-lock-file');
+  const pnpmLockFile = !getParam('--pnpm-lock-file');
   const srcLessDisable = getParam('--src-less-disable');
   const srcLessSubDev = getParam('--src-less-sub-dev-deps');
   const includeRootDeps = getParam('--include-root-deps');
@@ -68,14 +68,17 @@ async function getParams() {
   const projectWorkspaces = await getWorkspaces(rootDir);
 
   const workspaceName = (function getWorkspaceName() {
-    const [targetWorkspaceName] = cliParams;
+    let [targetWorkspaceName] = cliParams;
 
-    if (!targetWorkspaceName) {
-      console.log('please provide workspace name or folder');
-      process.exit(1);
+    if (targetWorkspaceName) {
+      if (projectWorkspaces[targetWorkspaceName]) return targetWorkspaceName;
+    } else {
+      targetWorkspaceName = '.';
     }
 
-    if (projectWorkspaces[targetWorkspaceName]) return targetWorkspaceName;
+    if (targetWorkspaceName[0] === '.') {
+      targetWorkspaceName = path.resolve(projectRoot, targetWorkspaceName);
+    }
 
     let workspaceName = Object.keys(projectWorkspaces).find(
       workspace => projectWorkspaces[workspace].location === targetWorkspaceName,
@@ -143,10 +146,11 @@ async function getParams() {
     isolating workspace in pnpm workspace project
     use:
     # pnpm-isolate [options] [workspace name to isolate]
+    # pnpm-isolate [options] // from a workspace folder
 
       // pnpm files
-      [--pnpmrc-disable]                     disable copy .npmrc file
-      [--pnpm-lock-file]                     generate pnpm-lock.yaml file
+      * [--pnpmrc-disable]                   disable copy .npmrc file
+      [--pnpm-lock-file]                     disable generate pnpm-lock.yaml file
 
       // src-less folder
       [--src-less-disable]                   disable create of the src-less folders
