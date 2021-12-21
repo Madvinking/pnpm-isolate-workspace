@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "in-w13-dev-dep-1": "workspace:1.0.0",
-    "in-w13-dev-dep-2": "workspace:1.0.0"
+    "in-w13-dev-dep-2": "workspace:1.0.0",
+    "workspace-17": "workspace:1.0.0"
   }
 }

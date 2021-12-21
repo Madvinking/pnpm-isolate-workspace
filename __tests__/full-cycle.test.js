@@ -349,7 +349,7 @@ describe('full cycle of isolated', () => {
     ]);
   });
 
-  test('--src-less-sub-dev-deps: should include sub worksapced dev deps', async () => {
+  test('--src-less-sub-dev-deps: should include sub workspaced dev deps', async () => {
     runWithParam('--src-less-sub-dev-deps');
 
     const folder = fse.readdirSync(`${workspaceFolder}/_isolated_/`);
@@ -368,6 +368,7 @@ describe('full cycle of isolated', () => {
       fse.readFileSync(`${workspaceFolder}/_isolated_/workspaces-src-less/packages/workspace-1/package.json`).toString(),
     );
 
+    // With '--src-less-sub-dev-deps', we include the 'devDependencies'
     expect(subWorkspacePackgeJson.devDependencies).toEqual({
       'in-w1-dev-dep-1': '1.0.0',
       'in-w1-dev-dep-2': '2.0.0',
@@ -375,6 +376,26 @@ describe('full cycle of isolated', () => {
       'workspace-13': 'workspace:1.0.0',
       'workspace-15': 'workspace:1.0.0',
     });
+
+    const subWorkspacePackgeJson2 = JSON.parse(
+      fse.readFileSync(`${workspaceFolder}/_isolated_/workspaces-src-less/packages/workspace13/package.json`).toString(),
+    );
+    // Also include the 'devDependencies' of those 'devDependencies'
+    expect(subWorkspacePackgeJson2.devDependencies).toEqual({
+      'in-w13-dev-dep-1': 'workspace:1.0.0',
+      'in-w13-dev-dep-2': 'workspace:1.0.0',
+      'workspace-17': 'workspace:1.0.0',
+    });
+
+    // Make sure we've copied over those workspaces
+    // workspace-1 -> workspace-15 -> workspace-17
+    expect(fse.existsSync(`${workspaceFolder}/_isolated_/workspaces-src-less/packages/workspace17/package.json`)).toEqual(true);
+
+    const subWorkspacePackgeJson3 = JSON.parse(
+      fse.readFileSync(`${workspaceFolder}/_isolated_/workspaces-src-less/packages/workspace17/package.json`).toString(),
+    );
+
+    expect(subWorkspacePackgeJson3.name).toEqual('workspace-17');
 
     // expect(fse.readFileSync(`${workspaceFolder}/_isolated_/yarn.lock`).toString().includes('in-w1-dev-dep-1@1')).toEqual(true);
   });

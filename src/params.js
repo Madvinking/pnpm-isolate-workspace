@@ -126,7 +126,14 @@ async function getParams() {
       Object.keys(dependencies).forEach(depName => {
         if (projectWorkspaces[depName] && !list.includes(depName)) {
           list.push(depName);
-          recursive(projectWorkspaces[depName].pkgJson.dependencies);
+          if (srcLessSubDev) {
+            recursive({
+              ...projectWorkspaces[depName].pkgJson.dependencies,
+              ...projectWorkspaces[depName].pkgJson.devDependencies,
+            });
+          } else {
+            recursive(projectWorkspaces[depName].pkgJson.dependencies);
+          }
         }
       });
     };
