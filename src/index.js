@@ -257,7 +257,13 @@ async function start() {
             }
           });
         }
-        if (lfData.importers[key].devDependencies) {
+        if (!srcLessSubDev) {
+          console.log('test', key, srcLessSubDev);
+          Object.keys(lfData.importers[key].devDependencies).forEach(depName => {
+            delete lfData.importers[key].specifiers[depName];
+          });
+          lfData.importers[key].devDependencies = {};
+        } else if (lfData.importers[key].devDependencies) {
           Object.keys(lfData.importers[key].devDependencies).forEach(depName => {
             if (relatedWorkspaces.includes(depName)) {
               lfData.importers[key].devDependencies[depName] = `link:${path.relative(
