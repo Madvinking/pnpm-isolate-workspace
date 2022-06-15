@@ -258,7 +258,6 @@ async function start() {
           });
         }
         if (!srcLessSubDev) {
-          console.log('test', key, srcLessSubDev);
           Object.keys(lfData.importers[key].devDependencies).forEach(depName => {
             delete lfData.importers[key].specifiers[depName];
           });
