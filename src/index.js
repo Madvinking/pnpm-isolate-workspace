@@ -257,20 +257,22 @@ async function start() {
             }
           });
         }
-        if (!srcLessSubDev) {
-          Object.keys(lfData.importers[key].devDependencies).forEach(depName => {
-            delete lfData.importers[key].specifiers[depName];
-          });
-          lfData.importers[key].devDependencies = {};
-        } else if (lfData.importers[key].devDependencies) {
-          Object.keys(lfData.importers[key].devDependencies).forEach(depName => {
-            if (relatedWorkspaces.includes(depName)) {
-              lfData.importers[key].devDependencies[depName] = `link:${path.relative(
-                projectWorkspaces[workspaceName].newLocation,
-                projectWorkspaces[depName].newLocation,
-              )}`;
-            }
-          });
+        if (lfData.importers[key].devDependencies) {
+          if (!srcLessSubDev) {
+            Object.keys(lfData.importers[key].devDependencies).forEach(depName => {
+              delete lfData.importers[key].specifiers[depName];
+            });
+            lfData.importers[key].devDependencies = {};
+          } else {
+            Object.keys(lfData.importers[key].devDependencies).forEach(depName => {
+              if (relatedWorkspaces.includes(depName)) {
+                lfData.importers[key].devDependencies[depName] = `link:${path.relative(
+                  projectWorkspaces[workspaceName].newLocation,
+                  projectWorkspaces[depName].newLocation,
+                )}`;
+              }
+            });
+          }
         }
       });
 
