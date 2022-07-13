@@ -4,6 +4,7 @@ const fs = require('fs');
 const fse = require('fs-extra');
 const readDirSync = require('fs-readdir-recursive');
 const lockfile = require('@pnpm/lockfile-file');
+const { pruneSharedLockfile } = require('@pnpm/prune-lockfile');
 const glob = require('glob');
 const { getParams } = require('./params');
 const YAML = require('yaml');
@@ -276,7 +277,8 @@ async function start() {
         }
       });
 
-    await lockfile.writeWantedLockfile(isolateFolder, lfData);
+    const prunedLockFile = await pruneSharedLockfile(lfData);
+    await lockfile.writeWantedLockfile(isolateFolder, prunedLockFile);
   }
 
   createDestinationFolders();
