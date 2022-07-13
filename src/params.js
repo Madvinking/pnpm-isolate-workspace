@@ -1,10 +1,10 @@
 const path = require('path');
 const fs = require('fs');
 
-const { default: getallWorkspaces } = require('@pnpm/find-workspace-packages');
+const { default: getAllWorkspaces } = require('@pnpm/find-workspace-packages');
 
 async function getWorkspaces(workspaceRoot) {
-  return (await getallWorkspaces(workspaceRoot)).reduce((acc, { dir, manifest: { name } }) => {
+  return (await getAllWorkspaces(workspaceRoot)).reduce((acc, { dir, manifest: { name } }) => {
     acc[name] = {
       location: dir,
     };
