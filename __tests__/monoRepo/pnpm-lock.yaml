@@ -42,11 +42,13 @@ importers:
       "workspace-15": workspace:1.0.0
       "in-w1-dev-dep-1": 1.0.0
       "in-w1-dev-dep-2": 2.0.0
+      "is-zero": 1.0.0
     dependencies:
       "workspace-2": link:../workspace-2
       "workspace-3": link:../workspace3
       "in-w1-dep-1": 1.0.0
       "in-w1-dep-2": 2.0.0
+      "is-zero": 1.0.0
     devDependencies:
       "workspace-11": link:../workspace11
       "workspace-13": link:../workspace12
@@ -60,3 +62,7 @@ packages:
     dependencies:
       "@babel/highlight": 7.13.10
     dev: true
+
+  /is-zero/1.0.0:
+    resolution: {integrity: sha512-1COuYJZC9wyFF8dL06ni3q5eyTzC4Hr+XJfOLNjIiqufpvto5aVNBhqWO1wjwR+fhoBcTbnSDUiBtvEdxHjLiw==}
+    dev: false
