@@ -36,7 +36,7 @@ describe('full cycle of isolated', () => {
       'workspaces-src-less-prod',
     ]);
 
-    const worksapceYaml = [
+    const workspaceYaml = [
       'workspaces/packages/workspace-1',
       'workspaces/packages/workspace-2',
       'workspaces/packages/workspace3',
@@ -49,7 +49,7 @@ describe('full cycle of isolated', () => {
 
     const currentYaml = YAML.parse(fse.readFileSync(`${workspaceFolder}/_isolated_/pnpm-workspace.yaml`).toString());
 
-    expect(currentYaml.packages).toEqual(worksapceYaml);
+    expect(currentYaml.packages).toEqual(workspaceYaml);
 
     const listOfAllWorkspaces = [
       'workspace-1',
