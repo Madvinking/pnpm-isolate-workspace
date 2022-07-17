@@ -1,10 +1,10 @@
 const path = require('path');
 const fs = require('fs');
 
-const { default: getallWorksapces } = require('@pnpm/find-workspace-packages');
+const { default: getAllWorkspaces } = require('@pnpm/find-workspace-packages');
 
-async function getWorkspaces(worksapceRoot) {
-  return (await getallWorksapces(worksapceRoot)).reduce((acc, { dir, manifest: { name } }) => {
+async function getWorkspaces(workspaceRoot) {
+  return (await getAllWorkspaces(workspaceRoot)).reduce((acc, { dir, manifest: { name } }) => {
     acc[name] = {
       location: dir,
     };
@@ -63,7 +63,7 @@ async function getParams() {
 
   const rootDir = getWorkspacesRoot(projectRoot);
 
-  const rootPacakgeJson = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf-8'));
+  const rootPackageJson = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf-8'));
 
   const projectWorkspaces = await getWorkspaces(rootDir);
 
@@ -91,8 +91,8 @@ async function getParams() {
   })();
 
   for (let key in projectWorkspaces) {
-    projectWorkspaces[key].reletivePath = path.relative(rootDir, projectWorkspaces[key].location);
-    projectWorkspaces[key].resolvePath = path.join('workspaces', projectWorkspaces[key].reletivePath);
+    projectWorkspaces[key].relativePath = path.relative(rootDir, projectWorkspaces[key].location);
+    projectWorkspaces[key].resolvePath = path.join('workspaces', projectWorkspaces[key].relativePath);
     projectWorkspaces[key].pkgJsonLocation = path.join(projectWorkspaces[key].location, 'package.json');
     projectWorkspaces[key].pkgJson = JSON.parse(fs.readFileSync(projectWorkspaces[key].pkgJsonLocation));
     if (projectWorkspaces[key].pkgJson.dependencies && projectWorkspaces[key].pkgJson.dependencies[workspaceName])
@@ -101,7 +101,7 @@ async function getParams() {
     if (projectWorkspaces[key].pkgJson.devDependencies && projectWorkspaces[key].pkgJson.devDependencies[workspaceName])
       delete projectWorkspaces[key].pkgJson.devDependencies[workspaceName];
 
-    if (srcFilesPackageJson) projectWorkspaces[key].inclueFiles = projectWorkspaces[key].pkgJson.files || [];
+    if (srcFilesPackageJson) projectWorkspaces[key].includeFiles = projectWorkspaces[key].pkgJson.files || [];
   }
 
   const workspaceData = projectWorkspaces[workspaceName];
@@ -176,7 +176,7 @@ async function getParams() {
       [--disable-root-config]                disable root package.json pnpm config (like overrides)
 
       // files
-      [--src-files-enable]                   copy all src file of main worksapce to isolate folder
+      [--src-files-enable]                   copy all src file of main workspace to isolate folder
       [--src-files-exclude-glob={value}]     copy src file of main workspace by glob
       [--src-files-include-glob={value}]     copy src file of main workspace by glob
       [--workspaces-exclude-glob={value}]    exclude glob when copy workspaces (default: node_modules and selected output-folder)
@@ -191,7 +191,7 @@ async function getParams() {
 
   return {
     rootDir,
-    rootPacakgeJson,
+    rootPackageJson,
     workspaceName,
     workspaceData,
     prodWorkspaces,

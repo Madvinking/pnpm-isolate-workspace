@@ -4,6 +4,7 @@ const fs = require('fs');
 const fse = require('fs-extra');
 const readDirSync = require('fs-readdir-recursive');
 const lockfile = require('@pnpm/lockfile-file');
+const { pruneSharedLockfile } = require('@pnpm/prune-lockfile');
 const glob = require('glob');
 const { getParams } = require('./params');
 const YAML = require('yaml');
@@ -11,7 +12,7 @@ async function start() {
   const {
     rootDir,
     disableRootConfig,
-    rootPacakgeJson,
+    rootPackageJson,
     outputFolder,
     workspaceData,
     prodWorkspaces,
@@ -36,31 +37,31 @@ async function start() {
     srcLessFolderProd,
   } = await getParams();
 
-  const ignorePattterns = ['.', 'package.json', 'node_modules', outputFolder];
+  const ignorePatterns = ['.', 'package.json', 'node_modules', outputFolder];
 
   function createDestinationFolders() {
     if (fs.existsSync(isolateFolder)) fs.rmSync(isolateFolder, { recursive: true });
     fs.mkdirSync(workspacesFolder, { recursive: true });
 
     if (srcFilesExcludeGlob) {
-      const files = glob.sync(srcFilesExcludeGlob, { cwd: workspaceData.location, absolute: true, ignore: ignorePattterns });
+      const files = glob.sync(srcFilesExcludeGlob, { cwd: workspaceData.location, absolute: true, ignore: ignorePatterns });
 
       const filesToCopy = readDirSync(
         workspaceData.location,
-        (name, i, dir) => !ignorePattterns.includes(name) && !files.includes(`${dir}/${name}`),
+        (name, i, dir) => !ignorePatterns.includes(name) && !files.includes(`${dir}/${name}`),
       );
 
       filesToCopy.forEach(file =>
         fse.copySync(path.join(workspaceData.location, file), path.join(isolateFolder, file), { preserveTimestamps: true }),
       );
     } else if (srcFilesIncludeGlob) {
-      const files = glob.sync(srcFilesIncludeGlob, { cwd: workspaceData.location, absolute: true, ignore: ignorePattterns });
+      const files = glob.sync(srcFilesIncludeGlob, { cwd: workspaceData.location, absolute: true, ignore: ignorePatterns });
 
       files.forEach(file =>
         fse.copySync(file, path.join(isolateFolder, path.relative(workspaceData.location, file)), { preserveTimestamps: true }),
       );
     } else if (srcFilesEnable) {
-      const filesToCopy = readDirSync(workspaceData.location, name => !ignorePattterns.includes(name));
+      const filesToCopy = readDirSync(workspaceData.location, name => !ignorePatterns.includes(name));
       filesToCopy.forEach(file =>
         fse.copySync(path.join(workspaceData.location, file), path.join(isolateFolder, file), { preserveTimestamps: true }),
       );
@@ -80,12 +81,12 @@ async function start() {
       fs.writeFileSync(subWorkspace.pkgJsonLocation, JSON.stringify(subWorkspace.pkgJson, null, 2));
 
       const files = workspacesExcludeGlob
-        ? glob.sync(workspacesExcludeGlob, { cwd: subWorkspace.location, absolute: true, ignore: ignorePattterns })
+        ? glob.sync(workspacesExcludeGlob, { cwd: subWorkspace.location, absolute: true, ignore: ignorePatterns })
         : [];
 
       const filesToCopy = readDirSync(
         subWorkspace.location,
-        (name, i, dir) => !ignorePattterns.includes(name) && !files.includes(`${dir}/${name}`),
+        (name, i, dir) => !ignorePatterns.includes(name) && !files.includes(`${dir}/${name}`),
       );
 
       filesToCopy.forEach(file =>
@@ -109,7 +110,7 @@ async function start() {
           flag: 'wx',
         });
         if (srcLessGlob) {
-          const files = glob.sync(srcLessGlob, { cwd: subWorkspace.location, absolute: true, ignore: ignorePattterns });
+          const files = glob.sync(srcLessGlob, { cwd: subWorkspace.location, absolute: true, ignore: ignorePatterns });
 
           files.forEach(file =>
             fse.copySync(file, path.join(subWorkspaceSrcLessFolder, path.relative(subWorkspace.location, file)), {
@@ -135,7 +136,7 @@ async function start() {
         });
 
         if (srcLessProdGlob) {
-          const files = glob.sync(srcLessProdGlob, { cwd: subWorkspace.location, absolute: true, ignore: ignorePattterns });
+          const files = glob.sync(srcLessProdGlob, { cwd: subWorkspace.location, absolute: true, ignore: ignorePatterns });
 
           files.forEach(file =>
             fse.copySync(file, path.join(subWorkspaceSrcLessProdFolder, path.relative(subWorkspace.location, file)), {
@@ -154,18 +155,18 @@ async function start() {
 
     if (includeRootDeps) {
       currentDevDependencies = {
-        ...rootPacakgeJson.devDependencies,
+        ...rootPackageJson.devDependencies,
         ...currentDevDependencies,
       };
     }
 
-    if (!disableRootConfig && rootPacakgeJson.pnpm) {
-      workspaceData.pkgJson.pnpm = rootPacakgeJson.pnpm;
+    if (!disableRootConfig && rootPackageJson.pnpm) {
+      workspaceData.pkgJson.pnpm = rootPackageJson.pnpm;
     }
 
     if (includeRootDeps) {
       workspaceData.pkgJson.dependencies = {
-        ...rootPacakgeJson.dependencies,
+        ...rootPackageJson.dependencies,
         ...workspaceData.pkgJson.dependencies,
       };
     }
@@ -183,11 +184,11 @@ async function start() {
 
   function createWorkspaceYaml() {
     const file = fs.readFileSync(path.join(rootDir, 'pnpm-workspace.yaml'), 'utf8');
-    const worksapceymalFile = YAML.parse(file);
+    const workspaceYamlFile = YAML.parse(file);
 
-    worksapceymalFile.packages = relatedWorkspaces.map(name => projectWorkspaces[name].resolvePath);
+    workspaceYamlFile.packages = relatedWorkspaces.map(name => projectWorkspaces[name].resolvePath);
 
-    fs.writeFileSync(path.join(isolateFolder, 'pnpm-workspace.yaml'), YAML.stringify(worksapceymalFile));
+    fs.writeFileSync(path.join(isolateFolder, 'pnpm-workspace.yaml'), YAML.stringify(workspaceYamlFile));
   }
 
   async function createPnpmLock() {
@@ -198,15 +199,15 @@ async function start() {
       return;
     }
 
-    const importersNames = relatedWorkspaces.map(name => projectWorkspaces[name].reletivePath);
+    const importersNames = relatedWorkspaces.map(name => projectWorkspaces[name].relativePath);
 
     let lfData = await lockfile.readWantedLockfile(rootDir, 'utf8');
 
     Object.keys(lfData.importers).forEach(key => {
-      if (!importersNames.includes(key) && key !== workspaceData.reletivePath && key !== '.') delete lfData.importers[key];
+      if (!importersNames.includes(key) && key !== workspaceData.relativePath && key !== '.') delete lfData.importers[key];
     });
 
-    const targetWorkspace = JSON.parse(JSON.stringify(lfData.importers[workspaceData.reletivePath]));
+    const targetWorkspace = JSON.parse(JSON.stringify(lfData.importers[workspaceData.relativePath]));
 
     lfData.importers['.'] = {
       specifiers: {
@@ -222,7 +223,7 @@ async function start() {
         ...(targetWorkspace.devDependencies || {}),
       },
     };
-    delete lfData.importers[workspaceData.reletivePath];
+    delete lfData.importers[workspaceData.relativePath];
 
     if (lfData.importers['.'].dependencies) {
       Object.keys(lfData.importers['.'].dependencies).forEach(depName => {
@@ -243,7 +244,7 @@ async function start() {
     Object.keys(lfData.importers)
       .filter(n => n !== '.')
       .forEach(currentKey => {
-        const workspaceName = relatedWorkspaces.find(name => projectWorkspaces[name].reletivePath === currentKey);
+        const workspaceName = relatedWorkspaces.find(name => projectWorkspaces[name].relativePath === currentKey);
         const key = `workspaces/${currentKey}`;
         lfData.importers[key] = lfData.importers[currentKey];
         delete lfData.importers[currentKey];
@@ -276,7 +277,8 @@ async function start() {
         }
       });
 
-    await lockfile.writeWantedLockfile(isolateFolder, lfData);
+    const prunedLockFile = await pruneSharedLockfile(lfData);
+    await lockfile.writeWantedLockfile(isolateFolder, prunedLockFile);
   }
 
   createDestinationFolders();

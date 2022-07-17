@@ -10,6 +10,7 @@ let workspaceFolder1 = path.join(__dirname, 'monoRepo/packages/workspace-1');
 const runWithParam = (params = '', workspace = 'root-workspace') => {
   execSync(
     `node ${path.join(__dirname, '../src/index.js')} --project-folder=${path.join(__dirname, 'monoRepo')} ${workspace} ${params}`,
+    { stdio: 'inherit' },
   );
 };
 
@@ -36,7 +37,7 @@ describe('full cycle of isolated', () => {
       'workspaces-src-less-prod',
     ]);
 
-    const worksapceYaml = [
+    const workspaceYaml = [
       'workspaces/packages/workspace-1',
       'workspaces/packages/workspace-2',
       'workspaces/packages/workspace3',
@@ -49,7 +50,7 @@ describe('full cycle of isolated', () => {
 
     const currentYaml = YAML.parse(fse.readFileSync(`${workspaceFolder}/_isolated_/pnpm-workspace.yaml`).toString());
 
-    expect(currentYaml.packages).toEqual(worksapceYaml);
+    expect(currentYaml.packages).toEqual(workspaceYaml);
 
     const listOfAllWorkspaces = [
       'workspace-1',
@@ -125,6 +126,17 @@ describe('full cycle of isolated', () => {
       'workspace-11': 'link:workspaces/packages/workspace11',
       'workspace-12': 'link:workspaces/packages/workspace12',
     });
+  });
+
+  test('should keep only relevant packages in the isolated lockfile', async () => {
+    runWithParam();
+    const originalLockFile = await lockfile.readWantedLockfile(`${rootFolder}`, 'utf8');
+
+    const isolatedLockFile = await lockfile.readWantedLockfile(`${workspaceFolder}/_isolated_`, 'utf8');
+
+    expect(isolatedLockFile.packages).not.toEqual(originalLockFile.packages);
+    expect(Object.keys(originalLockFile.packages)).toEqual(['/fs-e:/10.0.0', '/is-zero/1.0.0']);
+    expect(Object.keys(isolatedLockFile.packages)).toEqual(['/is-zero/1.0.0']);
   });
 
   test('--include-root-deps: generated in a different output folder', async () => {

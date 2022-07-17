@@ -6,7 +6,8 @@
     "workspace-2": "workspace:1.0.0",
     "workspace-3": "workspace:1.0.0",
     "in-w1-dep-1": "1.0.0",
-    "in-w1-dep-2": "2.0.0"
+    "in-w1-dep-2": "2.0.0",
+    "is-zero": "1.0.0"
   },
   "devDependencies": {
     "workspace-11": "workspace:1.0.0",

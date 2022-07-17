@@ -1,6 +1,6 @@
 {
   "name": "pnpm-isolate-workspace",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "will isolate one pnpm workspace",
   "main": "src/index.js",
   "bin": {
@@ -36,22 +36,23 @@
     "lint": "eslint --quiet --color ."
   },
   "dependencies": {
-    "@pnpm/lockfile-file": "4.2.3",
     "@pnpm/find-workspace-packages": "3.1.31",
+    "@pnpm/lockfile-file": "4.2.3",
     "@pnpm/logger": "4.0.0",
+    "@pnpm/prune-lockfile": "^4.0.11",
     "fs-extra": "^10.0.0",
     "fs-readdir-recursive": "1.1.0",
     "glob": "7.2.0",
     "yaml": "1.10.2"
   },
   "devDependencies": {
-    "pnpm": "6.24.2",
-    "husky": "7.0.4",
     "eslint": "^8.5.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "husky": "7.0.4",
     "jest": "27.4.5",
     "nodemon": "2.0.15",
+    "pnpm": "6.24.2",
     "prettier": "^2.5.1"
   },
   "peerDependencies": {
