@@ -1,6 +1,6 @@
 {
   "name": "pnpm-isolate-workspace",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "will isolate one pnpm workspace",
   "main": "src/index.js",
   "bin": {
@@ -58,7 +58,6 @@
   "peerDependencies": {
     "@pnpm/logger": "4.0.0"
   },
-  "volta": {
-    "node": "16.1.0"
-  }
+
+  "packageManager": "pnpm@7.5.2"
 }
