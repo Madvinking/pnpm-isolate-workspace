@@ -38,7 +38,6 @@
   "dependencies": {
     "@pnpm/find-workspace-packages": "6.0.2",
     "@pnpm/lockfile-file": "8.0.0",
-    "@pnpm/logger": "5.0.0",
     "@pnpm/prune-lockfile": "5.0.0",
     "fs-extra": "11.1.1",
     "fs-readdir-recursive": "1.1.0",
@@ -54,9 +53,6 @@
     "nodemon": "2.0.22",
     "pnpm": "8.0.0",
     "prettier": "2.8.7"
-  },
-  "peerDependencies": {
-    "@pnpm/logger": "4.0.0"
   },
   "packageManager": "pnpm@6.24.2"
 }

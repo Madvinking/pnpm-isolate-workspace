@@ -10,9 +10,6 @@ importers:
       '@pnpm/lockfile-file':
         specifier: 8.0.0
         version: 8.0.0(@pnpm/logger@5.0.0)
-      '@pnpm/logger':
-        specifier: 5.0.0
-        version: 5.0.0
       '@pnpm/prune-lockfile':
         specifier: 5.0.0
         version: 5.0.0
