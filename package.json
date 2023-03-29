@@ -1,6 +1,6 @@
 {
   "name": "pnpm-isolate-workspace",
-  "version": "0.0.8",
+  "version": "0.0.10",
   "description": "will isolate one pnpm workspace",
   "main": "src/index.js",
   "bin": {
@@ -36,28 +36,27 @@
     "lint": "eslint --quiet --color ."
   },
   "dependencies": {
-    "@pnpm/find-workspace-packages": "3.1.31",
-    "@pnpm/lockfile-file": "4.2.3",
-    "@pnpm/logger": "4.0.0",
-    "@pnpm/prune-lockfile": "^4.0.11",
-    "fs-extra": "^10.0.0",
+    "@pnpm/find-workspace-packages": "6.0.2",
+    "@pnpm/lockfile-file": "8.0.0",
+    "@pnpm/logger": "5.0.0",
+    "@pnpm/prune-lockfile": "5.0.0",
+    "fs-extra": "11.1.1",
     "fs-readdir-recursive": "1.1.0",
-    "glob": "7.2.0",
-    "yaml": "1.10.2"
+    "glob": "9.3.2",
+    "yaml": "2.2.1"
   },
   "devDependencies": {
-    "eslint": "^8.5.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "husky": "7.0.4",
-    "jest": "27.4.5",
-    "nodemon": "2.0.15",
-    "pnpm": "6.24.2",
-    "prettier": "^2.5.1"
+    "eslint": "8.37.0",
+    "eslint-config-prettier": "8.8.0",
+    "eslint-plugin-prettier": "4.2.1",
+    "husky": "8.0.3",
+    "jest": "29.5.0",
+    "nodemon": "2.0.22",
+    "pnpm": "8.0.0",
+    "prettier": "2.8.7"
   },
   "peerDependencies": {
     "@pnpm/logger": "4.0.0"
   },
-
   "packageManager": "pnpm@6.24.2"
 }
