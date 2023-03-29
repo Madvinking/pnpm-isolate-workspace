@@ -1,6 +1,6 @@
 {
   "name": "pnpm-isolate-workspace",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "will isolate one pnpm workspace",
   "main": "src/index.js",
   "bin": {
