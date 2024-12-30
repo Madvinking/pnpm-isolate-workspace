@@ -1,7 +1,7 @@
 const { execSync } = require('child_process');
 const fse = require('fs-extra');
 const path = require('path');
-const lockfile = require('@pnpm/lockfile-file');
+const lockfile = require('@pnpm/lockfile.fs');
 const YAML = require('yaml');
 let rootFolder = path.join(__dirname, 'monoRepo');
 let workspaceFolder = path.join(__dirname, 'monoRepo/packages/root-workspace');
@@ -135,8 +135,8 @@ describe('full cycle of isolated', () => {
     const isolatedLockFile = await lockfile.readWantedLockfile(`${workspaceFolder}/_isolated_`, 'utf8');
 
     expect(isolatedLockFile.packages).not.toEqual(originalLockFile.packages);
-    expect(Object.keys(originalLockFile.packages)).toEqual(['/fs-e:/10.0.0', '/is-zero/1.0.0']);
-    expect(Object.keys(isolatedLockFile.packages)).toEqual(['/is-zero/1.0.0']);
+    expect(Object.keys(originalLockFile.packages)).toEqual(['fs-e@10.0.0', 'is-zero@1.0.0']);
+    expect(Object.keys(isolatedLockFile.packages)).toEqual(['is-zero@1.0.0']);
   });
 
   test('--include-root-deps: generated in a different output folder', async () => {
@@ -144,7 +144,7 @@ describe('full cycle of isolated', () => {
 
     let lfData = await lockfile.readWantedLockfile(`${workspaceFolder}/_isolated_`, 'utf8');
     expect(lfData.importers['.'].specifiers).toEqual({
-      'dep-dev': '2.2.1',
+      'dev-dep': '2.2.1',
       'fs-e': '^10.0.0',
       'in-root-dep-1': '1.0.0',
       'in-root-dep-2': '2.0.0',
@@ -329,7 +329,7 @@ describe('full cycle of isolated', () => {
     ]);
   });
 
-  test('--src-files-exclude-glob: should exclude main workspace recived values', async () => {
+  test('--src-files-exclude-glob: should exclude main workspace received values', async () => {
     runWithParam("--src-files-exclude-glob='no.js' --src-less-disable");
 
     const folder = fse.readdirSync(`${workspaceFolder}/_isolated_/`);
@@ -345,7 +345,7 @@ describe('full cycle of isolated', () => {
     ]);
   });
 
-  test('--src-files-include-glob: should exclude main workspace recived values', async () => {
+  test('--src-files-include-glob: should exclude main workspace received values', async () => {
     runWithParam("--src-files-include-glob='src.js' --src-less-disable");
 
     const folder = fse.readdirSync(`${workspaceFolder}/_isolated_/`);
@@ -361,7 +361,7 @@ describe('full cycle of isolated', () => {
     ]);
   });
 
-  test('--src-less-sub-dev-deps: should include sub workspaced dev deps', async () => {
+  test('--src-less-sub-dev-deps: should include sub workspaces dev deps', async () => {
     runWithParam('--src-less-sub-dev-deps');
 
     const folder = fse.readdirSync(`${workspaceFolder}/_isolated_/`);
@@ -376,12 +376,12 @@ describe('full cycle of isolated', () => {
       'workspaces-src-less-prod',
     ]);
 
-    const subWorkspacePackgeJson = JSON.parse(
+    const subWorkspacePackageJson = JSON.parse(
       fse.readFileSync(`${workspaceFolder}/_isolated_/workspaces-src-less/packages/workspace-1/package.json`).toString(),
     );
 
     // With '--src-less-sub-dev-deps', we include the 'devDependencies'
-    expect(subWorkspacePackgeJson.devDependencies).toEqual({
+    expect(subWorkspacePackageJson.devDependencies).toEqual({
       'in-w1-dev-dep-1': '1.0.0',
       'in-w1-dev-dep-2': '2.0.0',
       'workspace-11': 'workspace:1.0.0',
@@ -389,13 +389,13 @@ describe('full cycle of isolated', () => {
       'workspace-15': 'workspace:1.0.0',
     });
 
-    const subWorkspacePackgeJson2 = JSON.parse(
+    const subWorkspacePackageJson2 = JSON.parse(
       fse.readFileSync(`${workspaceFolder}/_isolated_/workspaces-src-less/packages/workspace13/package.json`).toString(),
     );
     // Also include the 'devDependencies' of those 'devDependencies'
-    expect(subWorkspacePackgeJson2.devDependencies).toEqual({
-      'in-w13-dev-dep-1': 'workspace:1.0.0',
-      'in-w13-dev-dep-2': 'workspace:1.0.0',
+    expect(subWorkspacePackageJson2.devDependencies).toEqual({
+      'in-w13-dev-dep-1': '1.0.0',
+      'in-w13-dev-dep-2': '2.0.0',
       'workspace-17': 'workspace:1.0.0',
     });
 
@@ -403,11 +403,11 @@ describe('full cycle of isolated', () => {
     // workspace-1 -> workspace-15 -> workspace-17
     expect(fse.existsSync(`${workspaceFolder}/_isolated_/workspaces-src-less/packages/workspace17/package.json`)).toEqual(true);
 
-    const subWorkspacePackgeJson3 = JSON.parse(
+    const subWorkspacePackageJson3 = JSON.parse(
       fse.readFileSync(`${workspaceFolder}/_isolated_/workspaces-src-less/packages/workspace17/package.json`).toString(),
     );
 
-    expect(subWorkspacePackgeJson3.name).toEqual('workspace-17');
+    expect(subWorkspacePackageJson3.name).toEqual('workspace-17');
 
     // expect(fse.readFileSync(`${workspaceFolder}/_isolated_/yarn.lock`).toString().includes('in-w1-dev-dep-1@1')).toEqual(true);
   });
@@ -427,9 +427,9 @@ describe('full cycle of isolated', () => {
       'workspaces-src-less-prod',
     ]);
 
-    const mainPacakgeJson = JSON.parse(fse.readFileSync(`${workspaceFolder}/_isolated_/package.json`).toString());
+    const mainPackageJson = JSON.parse(fse.readFileSync(`${workspaceFolder}/_isolated_/package.json`).toString());
 
-    expect(mainPacakgeJson.dependencies).toEqual({
+    expect(mainPackageJson.dependencies).toEqual({
       'in-root-dep-1': '1.0.0',
       'in-root-dep-2': '2.0.0',
       'root-dep': '1',
@@ -437,7 +437,7 @@ describe('full cycle of isolated', () => {
       'workspace-2': 'workspace:1.0.0',
     });
 
-    expect(mainPacakgeJson.devDependencies).toEqual({
+    expect(mainPackageJson.devDependencies).toEqual({
       'in-root-dev-dep-1': '1.0.0',
       'in-root-dev-dep-2': '2.0.0',
       'root-dev-dep': '1',
@@ -445,9 +445,9 @@ describe('full cycle of isolated', () => {
       'workspace-12': 'workspace:1.0.0',
     });
 
-    const pacakgeJsonProd = JSON.parse(fse.readFileSync(`${workspaceFolder}/_isolated_/package-prod.json`).toString());
+    const packageJsonProd = JSON.parse(fse.readFileSync(`${workspaceFolder}/_isolated_/package-prod.json`).toString());
 
-    expect(pacakgeJsonProd.dependencies).toEqual({
+    expect(packageJsonProd.dependencies).toEqual({
       'in-root-dep-1': '1.0.0',
       'in-root-dep-2': '2.0.0',
       'root-dep': '1',
@@ -455,7 +455,7 @@ describe('full cycle of isolated', () => {
       'workspace-2': 'workspace:1.0.0',
     });
 
-    expect(pacakgeJsonProd.devDependencies).toEqual({});
+    expect(packageJsonProd.devDependencies).toEqual({});
 
     // const yarnLock = fse.readFileSync(`${workspaceFolder}/_isolated_/yarn.lock`).toString();
 

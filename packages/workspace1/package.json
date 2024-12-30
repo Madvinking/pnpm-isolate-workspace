@@ -7,6 +7,6 @@
   "author": "Nir winkler <madvinking@gmail.com>",
   "dependencies": {
     "@logzio-node-toolbox/logger": "0.0.15",
-    "@pnpm/workspace2": "1.0.0"
+    "@pnpm/workspace2": "workspace:1.0.0"
   }
 }
