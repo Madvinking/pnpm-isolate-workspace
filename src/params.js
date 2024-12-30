@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const yaml = require('yaml');
 
-const { findWorkspacePackages } = require('@pnpm/find-workspace-packages');
+const { findWorkspacePackages } = require('@pnpm/workspace.find-packages');
 
 async function getWorkspacePatterns(workspaceRoot) {
   const workspaceFilePath = path.join(workspaceRoot, 'pnpm-workspace.yaml');
@@ -27,13 +27,12 @@ async function getWorkspacePatterns(workspaceRoot) {
 }
 
 async function getWorkspaces(workspaceRoot) {
-  const patterns = await getWorkspacePatterns(workspaceRoot);
+  const workspaces = await findWorkspacePackages(workspaceRoot);
+  const filteredWorkspaces = workspaces.filter(({ rootDir }) => !rootDir.includes('_isolated_'));
 
-  const workspaces = await findWorkspacePackages(workspaceRoot, { patterns });
-
-  return workspaces.reduce((acc, { rootDir, manifest: { name } }) => {
+  return filteredWorkspaces.reduce((acc, { rootDir, manifest: { name } }) => {
     acc[name] = {
-      location: dir,
+      location: rootDir,
     };
     return acc;
   }, {});
@@ -189,7 +188,7 @@ async function getParams() {
       // src-less folder
       [--src-less-disable]                   disable create of the src-less folders
       [--src-less-glob={value}]              extra files to copy to src-less folder
-      [--src-less-sub-dev-deps]              include sub workspaces dev dependecies (if sub workspaces need to be build as well)
+      [--src-less-sub-dev-deps]              include sub workspaces dev dependencies (if sub workspaces need to be build as well)
 
       // src-less-prod folder
       [--src-less-prod-disable]              disable create the prod src-less folder
@@ -197,7 +196,7 @@ async function getParams() {
 
       // main workspace
       [--json-file-disable]                  disable create json file
-      [--json-file-prod-disable]             disable create json prod json file (withtout dev-dependencies)
+      [--json-file-prod-disable]             disable create json prod json file (without dev-dependencies)
       [--output-folder]                      folder to create all generated files (default to _isolated_)
       [--include-root-deps]                  include root workspaces package.json dependencies and dev dependencies
       [--disable-root-config]                disable root package.json pnpm config (like overrides)

@@ -1,68 +1,201 @@
-lockfileVersion: 5.3
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+overrides:
+  override-workspace: '82'
 
 importers:
+
   .:
-    specifiers:
-      fs-e: ^10.0.0
-      dep-dev: 2.2.1
     dependencies:
-      fs-e: 10.0.0
+      fs-e:
+        specifier: ^10.0.0
+        version: 10.0.0
     devDependencies:
-      dev-dep: 2.2.1
+      dev-dep:
+        specifier: 2.2.1
+        version: 2.2.1
 
   packages/root-workspace:
-    specifiers:
-      "workspace-1": workspace:1.0.0
-      "workspace-2": workspace:1.0.0
-      "in-root-dep-1": 1.0.0
-      "in-root-dep-2": 2.0.0
-      "workspace-11": workspace:1.0.0
-      "workspace-12": workspace:1.0.0
-      "in-root-dev-dep-1": 1.0.0
-      "in-root-dev-dep-2": 2.0.0
     dependencies:
-      "workspace-1": link:../workspace-1
-      "workspace-2": link:../workspace-2
-      "in-root-dep-1": 1.0.0
-      "in-root-dep-2": 2.0.0
+      in-root-dep-1:
+        specifier: 1.0.0
+        version: 1.0.0
+      in-root-dep-2:
+        specifier: 2.0.0
+        version: 2.0.0
+      workspace-1:
+        specifier: workspace:1.0.0
+        version: link:../workspace-1
+      workspace-2:
+        specifier: workspace:1.0.0
+        version: link:../workspace-2
     devDependencies:
-      "workspace-11": link:../workspace-1
-      "workspace-12": link:../workspace-1
-      "in-root-dev-dep-1": 1.0.0
-      "in-root-dev-dep-2": 2.0.0
+      in-root-dev-dep-1:
+        specifier: 1.0.0
+        version: 1.0.0
+      in-root-dev-dep-2:
+        specifier: 2.0.0
+        version: 2.0.0
+      workspace-11:
+        specifier: workspace:1.0.0
+        version: link:../workspace11
+      workspace-12:
+        specifier: workspace:1.0.0
+        version: link:../workspace12
 
   packages/workspace-1:
-    specifiers:
-      "workspace-2": workspace:1.0.0
-      "workspace-3": workspace:1.0.0
-      "in-w1-dep-1": 1.0.0
-      "in-w1-dep-2": 2.0.0
-      "workspace-11": workspace:1.0.0
-      "workspace-13": workspace:1.0.0
-      "workspace-15": workspace:1.0.0
-      "in-w1-dev-dep-1": 1.0.0
-      "in-w1-dev-dep-2": 2.0.0
-      "is-zero": 1.0.0
     dependencies:
-      "workspace-2": link:../workspace-2
-      "workspace-3": link:../workspace3
-      "in-w1-dep-1": 1.0.0
-      "in-w1-dep-2": 2.0.0
-      "is-zero": 1.0.0
+      in-w1-dep-1:
+        specifier: 1.0.0
+        version: 1.0.0
+      in-w1-dep-2:
+        specifier: 2.0.0
+        version: 2.0.0
+      is-zero:
+        specifier: 1.0.0
+        version: 1.0.0
+      workspace-2:
+        specifier: workspace:1.0.0
+        version: link:../workspace-2
+      workspace-3:
+        specifier: workspace:1.0.0
+        version: link:../workspace3
     devDependencies:
-      "workspace-11": link:../workspace11
-      "workspace-13": link:../workspace12
-      "workspace-15": link:../workspace15
-      "in-w1-dev-dep-1": 1.0.0
-      "in-w1-dev-dep-2": 2.0.0
+      in-w1-dev-dep-1:
+        specifier: 1.0.0
+        version: 1.0.0
+      in-w1-dev-dep-2:
+        specifier: 2.0.0
+        version: 2.0.0
+      workspace-11:
+        specifier: workspace:1.0.0
+        version: link:../workspace11
+      workspace-13:
+        specifier: workspace:1.0.0
+        version: link:../workspace13
+      workspace-15:
+        specifier: workspace:1.0.0
+        version: link:../workspace15
+
+  packages/workspace-2:
+    dependencies:
+      in-w2-dep-1:
+        specifier: 1.0.0
+        version: 1.0.0
+      in-w2-dep-2:
+        specifier: 2.0.0
+        version: 2.0.0
+    devDependencies:
+      in-w2-dev-dep-1:
+        specifier: 1.0.0
+        version: 1.0.0
+      in-w2-dev-dep-2:
+        specifier: 2.0.0
+        version: 2.0.0
+
+  packages/workspace-4:
+    dependencies:
+      in-w4-dep-1:
+        specifier: 1.0.0
+        version: 1.0.0
+      in-w4-dep-2:
+        specifier: 2.0.0
+        version: 2.0.0
+    devDependencies:
+      in-w4-dev-dep-1:
+        specifier: 1.0.0
+        version: 1.0.0
+      in-w4-dev-dep-2:
+        specifier: 2.0.0
+        version: 2.0.0
+
+  packages/workspace11:
+    dependencies:
+      in-w11-dep-1:
+        specifier: 1.0.0
+        version: 1.0.0
+      in-w11-dep-2:
+        specifier: 2.0.0
+        version: 2.0.0
+      workspace-12:
+        specifier: workspace:1.0.0
+        version: link:../workspace12
+      workspace-13:
+        specifier: workspace:1.0.0
+        version: link:../workspace13
+    devDependencies:
+      in-w11-dev-dep-1:
+        specifier: 1.0.0
+        version: 1.0.0
+      in-w11-dev-dep-2:
+        specifier: 2.0.0
+        version: 2.0.0
+      workspace-14:
+        specifier: workspace:1.0.0
+        version: link:../workspace14
+
+  packages/workspace12:
+    dependencies:
+      in-w12-dep-1:
+        specifier: 1.0.0
+        version: 1.0.0
+      in-w12-dep-2:
+        specifier: 2.0.0
+        version: 2.0.0
+    devDependencies:
+      in-w12-dev-dep-1:
+        specifier: 1.0.0
+        version: 1.0.0
+      in-w12-dev-dep-2:
+        specifier: 2.0.0
+        version: 2.0.0
+
+  packages/workspace13:
+    dependencies:
+      workspace16:
+        specifier: workspace:1.0.0
+        version: link:../workspace16
+    devDependencies:
+      in-w13-dev-dep-1:
+        specifier: 1.0.0
+        version: 1.0.0
+      in-w13-dev-dep-2:
+        specifier: 2.0.0
+        version: 2.0.0
+      workspace-17:
+        specifier: workspace:1.0.0
+        version: link:../workspace17
+
+  packages/workspace14: {}
+
+  packages/workspace15: {}
+
+  packages/workspace16: {}
+
+  packages/workspace17: {}
+
+  packages/workspace3:
+    dependencies:
+      workspace4:
+        specifier: workspace:1.0.0
+        version: link:../workspace-4
 
 packages:
-  /fs-e:/10.0.0:
+
+  fs-e@10.0.0:
     resolution: { integrity: sha51223123123+z7dnmgvP9QtIleuETGOiOH1RcIw== }
+
+  is-zero@1.0.0:
+    resolution: {integrity: sha512-1COuYJZC9wyFF8dL06ni3q5eyTzC4Hr+XJfOLNjIiqufpvto5aVNBhqWO1wjwR+fhoBcTbnSDUiBtvEdxHjLiw==}
+
+snapshots:
+
+  fs-e@10.0.0:
     dependencies:
       "@babel/highlight": 7.13.10
-    dev: true
 
-  /is-zero/1.0.0:
-    resolution: {integrity: sha512-1COuYJZC9wyFF8dL06ni3q5eyTzC4Hr+XJfOLNjIiqufpvto5aVNBhqWO1wjwR+fhoBcTbnSDUiBtvEdxHjLiw==}
-    dev: false
+  is-zero@1.0.0: {}
