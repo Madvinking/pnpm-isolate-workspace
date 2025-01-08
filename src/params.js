@@ -1,13 +1,37 @@
 const path = require('path');
 const fs = require('fs');
+const yaml = require('yaml');
 
 const { findWorkspacePackages } = require('@pnpm/workspace.find-packages');
 
-async function getWorkspaces(workspaceRoot) {
-  const workspaces = await findWorkspacePackages(workspaceRoot);
-  const filteredWorkspaces = workspaces.filter(({ rootDir }) => !rootDir.includes('_isolated_'));
+async function getWorkspacePatterns(workspaceRoot) {
+  const workspaceFilePath = path.join(workspaceRoot, 'pnpm-workspace.yaml');
 
-  return filteredWorkspaces.reduce((acc, { rootDir, manifest: { name } }) => {
+  try {
+    const fileContent = fs.readFileSync(workspaceFilePath, { encoding: 'utf-8' });
+    const { packages } = yaml.parse(fileContent);
+
+    if (!packages || !Array.isArray(packages)) {
+      console.warn(`No "packages" field found in ${workspaceFilePath}`);
+      return undefined;
+    }
+
+    return packages;
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      console.warn(`File ${workspaceFilePath} not found.`);
+      return undefined;
+    }
+    throw err;
+  }
+}
+
+async function getWorkspaces(workspaceRoot) {
+  const patterns = await getWorkspacePatterns(workspaceRoot);
+
+  const workspaces = await findWorkspacePackages(workspaceRoot, { patterns });
+
+  return workspaces.reduce((acc, { rootDir, manifest: { name } }) => {
     acc[name] = {
       location: rootDir,
     };
