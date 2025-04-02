@@ -2,6 +2,7 @@
   "name": "pnpm-isolate-workspace",
   "version": "0.0.13",
   "description": "will isolate one pnpm workspace",
+  "type": "module",
   "main": "src/index.js",
   "bin": {
     "pnpm-isolate-workspace": "src/index.js"
@@ -31,8 +32,8 @@
   },
   "scripts": {
     "clean": "rm -rf node_modules",
-    "test": "jest --config jest.config.js --silent=false full-cycle",
-    "test:watch": "jest --watch --config jest.config.js --silent=false full-cycle",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
     "lint": "eslint --quiet --color ."
   },
   "dependencies": {
@@ -48,12 +49,10 @@
   "devDependencies": {
     "eslint": "9.23.0",
     "eslint-config-prettier": "10.1.1",
-    "eslint-plugin-prettier": "5.2.5",
     "husky": "9.1.7",
-    "jest": "29.7.0",
     "nodemon": "3.1.9",
     "pnpm": "10.7.1",
-    "prettier": "3.5.3"
+    "vitest": "3.1.1"
   },
   "packageManager": "pnpm@10.7.1"
 }

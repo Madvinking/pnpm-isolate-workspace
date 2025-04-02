@@ -1,13 +1,14 @@
 #!/usr/bin/env node
-const path = require('path');
-const fs = require('fs');
-const fse = require('fs-extra');
-const readDirSync = require('fs-readdir-recursive');
-const lockfile = require('@pnpm/lockfile.fs');
-const pruneLockfile = require('@pnpm/lockfile.pruner');
-const glob = require('glob');
-const { getParams } = require('./params');
-const YAML = require('yaml');
+import path from 'path';
+import fs from 'fs';
+import fse from 'fs-extra';
+import readDirSync from 'fs-readdir-recursive';
+import * as lockfile from '@pnpm/lockfile.fs';
+import * as pruneLockfile from '@pnpm/lockfile.pruner';
+import * as glob from 'glob';
+import { getParams } from './params.js';
+import YAML from 'yaml';
+
 async function start() {
   const {
     rootDir,
@@ -42,21 +43,17 @@ async function start() {
   function createDestinationFolders() {
     if (fs.existsSync(isolateFolder)) fs.rmSync(isolateFolder, { recursive: true });
     fs.mkdirSync(workspacesFolder, { recursive: true });
-
     if (srcFilesExcludeGlob) {
       const files = glob.sync(srcFilesExcludeGlob, { cwd: workspaceData.location, absolute: true, ignore: ignorePatterns });
-
       const filesToCopy = readDirSync(
         workspaceData.location,
         (name, i, dir) => !ignorePatterns.includes(name) && !files.includes(`${dir}/${name}`),
       );
-
       filesToCopy.forEach(file =>
         fse.copySync(path.join(workspaceData.location, file), path.join(isolateFolder, file), { preserveTimestamps: true }),
       );
     } else if (srcFilesIncludeGlob) {
       const files = glob.sync(srcFilesIncludeGlob, { cwd: workspaceData.location, absolute: true, ignore: ignorePatterns });
-
       files.forEach(file =>
         fse.copySync(file, path.join(isolateFolder, path.relative(workspaceData.location, file)), { preserveTimestamps: true }),
       );
@@ -258,6 +255,7 @@ async function start() {
             }
           });
         }
+
         if (lfData.importers[key].devDependencies) {
           if (!srcLessSubDev) {
             Object.keys(lfData.importers[key].devDependencies).forEach(depName => {

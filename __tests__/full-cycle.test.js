@@ -1,11 +1,17 @@
-const { execSync } = require('child_process');
-const fse = require('fs-extra');
-const path = require('path');
-const lockfile = require('@pnpm/lockfile.fs');
-const YAML = require('yaml');
-let rootFolder = path.join(__dirname, 'monoRepo');
-let workspaceFolder = path.join(__dirname, 'monoRepo/packages/root-workspace');
-let workspaceFolder1 = path.join(__dirname, 'monoRepo/packages/workspace-1');
+import { execSync } from 'child_process';
+import fse from 'fs-extra';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import lockfile from '@pnpm/lockfile.fs';
+import YAML from 'yaml';
+import { afterEach, describe, expect, test } from 'vitest';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const rootFolder = path.join(__dirname, 'monoRepo');
+const workspaceFolder = path.join(__dirname, 'monoRepo/packages/root-workspace');
+const workspaceFolder1 = path.join(__dirname, 'monoRepo/packages/workspace-1');
 
 const runWithParam = (params = '', workspace = 'root-workspace') => {
   execSync(
@@ -186,6 +192,7 @@ describe('full cycle of isolated', () => {
       'workspaces-src-less',
       'workspaces-src-less-prod',
     ]);
+
     expect(fse.existsSync(`${workspaceFolder}/_isolated_`)).toEqual(false);
   });
 
@@ -392,6 +399,7 @@ describe('full cycle of isolated', () => {
     const subWorkspacePackageJson2 = JSON.parse(
       fse.readFileSync(`${workspaceFolder}/_isolated_/workspaces-src-less/packages/workspace13/package.json`).toString(),
     );
+
     // Also include the 'devDependencies' of those 'devDependencies'
     expect(subWorkspacePackageJson2.devDependencies).toEqual({
       'in-w13-dev-dep-1': '1.0.0',
@@ -408,8 +416,6 @@ describe('full cycle of isolated', () => {
     );
 
     expect(subWorkspacePackageJson3.name).toEqual('workspace-17');
-
-    // expect(fse.readFileSync(`${workspaceFolder}/_isolated_/yarn.lock`).toString().includes('in-w1-dev-dep-1@1')).toEqual(true);
   });
 
   test('--include-root-deps: should include root package json dev and prod deps', async () => {
@@ -456,11 +462,6 @@ describe('full cycle of isolated', () => {
     });
 
     expect(packageJsonProd.devDependencies).toEqual({});
-
-    // const yarnLock = fse.readFileSync(`${workspaceFolder}/_isolated_/yarn.lock`).toString();
-
-    // expect(yarnLock.includes('root-dep')).toEqual(true);
-    // expect(yarnLock.includes('root-dev-dep')).toEqual(true);
   });
 
   test('--disable-root-config: should not copy root pnpm config', async () => {
