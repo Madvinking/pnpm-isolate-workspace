@@ -1,21 +1,17 @@
-const path = require('path');
-const fs = require('fs');
-const yaml = require('yaml');
-
-const { findWorkspacePackages } = require('@pnpm/workspace.find-packages');
+import path from 'path';
+import fs from 'fs';
+import yaml from 'yaml';
+import { findWorkspacePackages } from '@pnpm/workspace.find-packages';
 
 async function getWorkspacePatterns(workspaceRoot) {
   const workspaceFilePath = path.join(workspaceRoot, 'pnpm-workspace.yaml');
-
   try {
     const fileContent = fs.readFileSync(workspaceFilePath, { encoding: 'utf-8' });
     const { packages } = yaml.parse(fileContent);
-
     if (!packages || !Array.isArray(packages)) {
       console.warn(`No "packages" field found in ${workspaceFilePath}`);
       return undefined;
     }
-
     return packages;
   } catch (err) {
     if (err.code === 'ENOENT') {
@@ -28,9 +24,7 @@ async function getWorkspacePatterns(workspaceRoot) {
 
 async function getWorkspaces(workspaceRoot) {
   const patterns = await getWorkspacePatterns(workspaceRoot);
-
   const workspaces = await findWorkspacePackages(workspaceRoot, { patterns });
-
   return workspaces.reduce((acc, { rootDir, manifest: { name } }) => {
     acc[name] = {
       location: rootDir,
@@ -39,16 +33,13 @@ async function getWorkspaces(workspaceRoot) {
   }, {});
 }
 
-async function getParams() {
+export async function getParams() {
   let [, , ...cliParams] = process.argv;
 
   function getParam(name, value = false) {
     const p = cliParams.find(p => p.includes(name));
-
     cliParams = cliParams.filter(p => !p.includes(name));
-
     if (value) return p ? p.split('=')[1] : false;
-
     return Boolean(p);
   }
 
@@ -72,7 +63,6 @@ async function getParams() {
   const workspacesExcludeGlob = getParam('--workspaces-exclude-glob', true);
   const disableRootConfig = getParam('--disable-root-config');
   const projectRoot = getParam('--project-folder', true) || path.resolve();
-
   let max = getParam('--max-depth', true) || 5;
 
   const getWorkspacesRoot = dir => {
@@ -89,20 +79,16 @@ async function getParams() {
   };
 
   const rootDir = getWorkspacesRoot(projectRoot);
-
   const rootPackageJson = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf-8'));
-
   const projectWorkspaces = await getWorkspaces(rootDir);
 
   const workspaceName = (function getWorkspaceName() {
     let [targetWorkspaceName] = cliParams;
-
     if (targetWorkspaceName) {
       if (projectWorkspaces[targetWorkspaceName]) return targetWorkspaceName;
     } else {
       targetWorkspaceName = '.';
     }
-
     if (targetWorkspaceName[0] === '.') {
       targetWorkspaceName = path.resolve(projectRoot, targetWorkspaceName);
     }
@@ -110,7 +96,6 @@ async function getParams() {
     let workspaceName = Object.keys(projectWorkspaces).find(
       workspace => projectWorkspaces[workspace].location === targetWorkspaceName,
     );
-
     if (workspaceName) return workspaceName;
 
     console.log(`no such workspace or folder: ${targetWorkspaceName}`);
@@ -124,10 +109,8 @@ async function getParams() {
     projectWorkspaces[key].pkgJson = JSON.parse(fs.readFileSync(projectWorkspaces[key].pkgJsonLocation));
     if (projectWorkspaces[key].pkgJson.dependencies && projectWorkspaces[key].pkgJson.dependencies[workspaceName])
       delete projectWorkspaces[key].pkgJson.dependencies[workspaceName];
-
     if (projectWorkspaces[key].pkgJson.devDependencies && projectWorkspaces[key].pkgJson.devDependencies[workspaceName])
       delete projectWorkspaces[key].pkgJson.devDependencies[workspaceName];
-
     if (srcFilesPackageJson) projectWorkspaces[key].includeFiles = projectWorkspaces[key].pkgJson.files || [];
   }
 
@@ -181,38 +164,31 @@ async function getParams() {
     use:
     # pnpm-isolate [options] [workspace name to isolate]
     # pnpm-isolate [options] // from a workspace folder
-
       // pnpm files
       * [--pnpmrc-disable]                   disable copy .npmrc file
       [--pnpm-lock-file]                     disable generate pnpm-lock.yaml file
-
       // src-less folder
       [--src-less-disable]                   disable create of the src-less folders
       [--src-less-glob={value}]              extra files to copy to src-less folder
       [--src-less-sub-dev-deps]              include sub workspaces dev dependencies (if sub workspaces need to be build as well)
-
       // src-less-prod folder
       [--src-less-prod-disable]              disable create the prod src-less folder
       [--src-less-prod-glob={value}]         extra files to copy to src-less folder
-
       // main workspace
       [--json-file-disable]                  disable create json file
       [--json-file-prod-disable]             disable create json prod json file (without dev-dependencies)
       [--output-folder]                      folder to create all generated files (default to _isolated_)
       [--include-root-deps]                  include root workspaces package.json dependencies and dev dependencies
       [--disable-root-config]                disable root package.json pnpm config (like overrides)
-
       // files
       [--src-files-enable]                   copy all src file of main workspace to isolate folder
       [--src-files-exclude-glob={value}]     copy src file of main workspace by glob
       [--src-files-include-glob={value}]     copy src file of main workspace by glob
       [--workspaces-exclude-glob={value}]    exclude glob when copy workspaces (default: node_modules and selected output-folder)
-
       // workspaces folder configuration
       [--max-depth]                          by default we search recursively project-root 5 folder
       [--project-folder={value}]             absolute path to project-root (default will look for the root)
   `);
-
     process.exit(0);
   }
 
@@ -248,7 +224,3 @@ async function getParams() {
     disableRootConfig,
   };
 }
-
-module.exports = {
-  getParams,
-};
