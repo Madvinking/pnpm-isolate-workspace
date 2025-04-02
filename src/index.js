@@ -5,7 +5,7 @@ import fse from 'fs-extra';
 import readDirSync from 'fs-readdir-recursive';
 import * as lockfile from '@pnpm/lockfile.fs';
 import * as pruneLockfile from '@pnpm/lockfile.pruner';
-import * as glob from 'glob';
+import { globSync } from 'glob';
 import { getParams } from './params.js';
 import YAML from 'yaml';
 
@@ -44,7 +44,7 @@ async function start() {
     if (fs.existsSync(isolateFolder)) fs.rmSync(isolateFolder, { recursive: true });
     fs.mkdirSync(workspacesFolder, { recursive: true });
     if (srcFilesExcludeGlob) {
-      const files = glob.sync(srcFilesExcludeGlob, { cwd: workspaceData.location, absolute: true, ignore: ignorePatterns });
+      const files = globSync(srcFilesExcludeGlob, { cwd: workspaceData.location, absolute: true, ignore: ignorePatterns });
       const filesToCopy = readDirSync(
         workspaceData.location,
         (name, i, dir) => !ignorePatterns.includes(name) && !files.includes(`${dir}/${name}`),
@@ -53,7 +53,7 @@ async function start() {
         fse.copySync(path.join(workspaceData.location, file), path.join(isolateFolder, file), { preserveTimestamps: true }),
       );
     } else if (srcFilesIncludeGlob) {
-      const files = glob.sync(srcFilesIncludeGlob, { cwd: workspaceData.location, absolute: true, ignore: ignorePatterns });
+      const files = globSync(srcFilesIncludeGlob, { cwd: workspaceData.location, absolute: true, ignore: ignorePatterns });
       files.forEach(file =>
         fse.copySync(file, path.join(isolateFolder, path.relative(workspaceData.location, file)), { preserveTimestamps: true }),
       );
@@ -77,8 +77,9 @@ async function start() {
       if (!srcLessSubDev) subWorkspace.pkgJson.devDependencies = {};
       fs.writeFileSync(subWorkspace.pkgJsonLocation, JSON.stringify(subWorkspace.pkgJson, null, 2));
 
-      const files = workspacesExcludeGlob
-        ? glob.sync(workspacesExcludeGlob, { cwd: subWorkspace.location, absolute: true, ignore: ignorePatterns })
+
+      const files = workspacesExcludeGlob && workspacesExcludeGlob.length > 0
+        ? globSync(workspacesExcludeGlob, { cwd: subWorkspace.location, absolute: true, ignore: ignorePatterns })
         : [];
 
       const filesToCopy = readDirSync(
@@ -107,7 +108,8 @@ async function start() {
           flag: 'wx',
         });
         if (srcLessGlob) {
-          const files = glob.sync(srcLessGlob, { cwd: subWorkspace.location, absolute: true, ignore: ignorePatterns });
+
+          const files = globSync(srcLessGlob, { cwd: subWorkspace.location, absolute: true, ignore: ignorePatterns });
 
           files.forEach(file =>
             fse.copySync(file, path.join(subWorkspaceSrcLessFolder, path.relative(subWorkspace.location, file)), {
@@ -133,7 +135,7 @@ async function start() {
         });
 
         if (srcLessProdGlob) {
-          const files = glob.sync(srcLessProdGlob, { cwd: subWorkspace.location, absolute: true, ignore: ignorePatterns });
+          const files = globSync(srcLessProdGlob, { cwd: subWorkspace.location, absolute: true, ignore: ignorePatterns });
 
           files.forEach(file =>
             fse.copySync(file, path.join(subWorkspaceSrcLessProdFolder, path.relative(subWorkspace.location, file)), {

@@ -1,6 +1,6 @@
 {
   "name": "pnpm-isolate-workspace",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "will isolate one pnpm workspace",
   "type": "module",
   "main": "src/index.js",
@@ -43,7 +43,7 @@
     "@pnpm/workspace.find-packages": "1000.0.19",
     "fs-extra": "11.3.0",
     "fs-readdir-recursive": "1.1.0",
-    "glob": "11.0.1",
+    "glob": "10.3.10",
     "yaml": "2.7.1"
   },
   "devDependencies": {
