@@ -1,13 +1,13 @@
 {
   "name": "workspace-12",
-  "version": "1.1.1",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "in-w12-dep-1": "workspace:1.0.0",
-    "in-w12-dep-2": "workspace:1.0.0"
+    "in-w12-dep-1": "1.0.0",
+    "in-w12-dep-2": "2.0.0"
   },
   "devDependencies": {
-    "in-w12-dev-dep-1": "workspace:1.0.0",
-    "in-w12-dev-dep-2": "workspace:1.0.0"
+    "in-w12-dev-dep-1": "1.0.0",
+    "in-w12-dev-dep-2": "2.0.0"
   }
 }
